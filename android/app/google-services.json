@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "472209075797",
+    "project_id": "saccomgapp",
+    "storage_bucket": "saccomgapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:472209075797:android:fec0d9b791198943792edc",
+        "android_client_info": {
+          "package_name": "com.saccoappreact1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "472209075797-9mt9lhnklhmor5sqdlrgm2nf43bta767.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.saccoappreact1",
+            "certificate_hash": "32f057be9a0b13bc74e65fb0b4777e8896ccb36c"
+          }
+        },
+        {
+          "client_id": "472209075797-h5i8to80lifm73gguqn3ecckqo4hvhgk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmPkuqdozP092wJPid0KrXLGM1UfzEdEI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "472209075797-h5i8to80lifm73gguqn3ecckqo4hvhgk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
