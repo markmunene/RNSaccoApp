@@ -18,3 +18,38 @@ export const RegisteredUsers = user => {
     });
   };
 };
+
+export const AddnewUser = user => {
+  return async dispatch => {
+    
+    dispatch({
+      type: 'ADD_NEW_USER',
+      payload: user.userData,
+    });
+  };
+}
+export const UpdateUser = user => {
+  return async dispatch =>
+  {
+    console.log(user);
+    dispatch({
+      type: 'UPDATE_USER',
+      payload: user,
+    });
+  };
+}
+export const DeleteUser = user =>
+{
+  return async dispatch =>
+  {
+    await firestore().collection('users').doc(user.item.id).delete();
+    // console.log(user.item.id);
+    dispatch({
+      type: 'DELETE_USER',
+      payload: user.item,
+    });
+  }
+
+
+}
+

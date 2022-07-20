@@ -26,6 +26,7 @@ import LoanPayment from './screens/LoanPayment';
 import AdminRoute from './screens/AdminRoute';
 import Allusers from './screens/Allusers';
 import LoanRequestDetails from './screens/LoanRequestDetails';
+import AllWithdrawRequests from './screens/AllWithdrawRequests';
 
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -39,7 +40,9 @@ import {LoginAction} from './screens/Actions/LoginAction';
 import auth from '@react-native-firebase/auth';
 
 import {RegisteredUsers} from './screens/Actions/RegisteredUsers';
-import {getAllwithdrawRequests} from './screens/Actions/WithdrawAction';
+import { getAllwithdrawRequests } from './screens/Actions/WithdrawAction';
+import { getAllDeposits } from './screens/Actions/DepositAction';
+
 
 const Screenstack = () => {
   const dispatch = useDispatch();
@@ -60,6 +63,7 @@ const Screenstack = () => {
       dispatch(getJoints());
       dispatch(getGroups());
       dispatch(getAllwithdrawRequests());
+      dispatch(getAllDeposits());
     }
     return () => {
       isMounted = false;
@@ -77,6 +81,7 @@ const Screenstack = () => {
         <Stack.Screen name="login" component={Login} />
         <Stack.Screen name="GroupTransactions" component={GroupTransactions} />
         <Stack.Screen name="LoanPayment" component={LoanPayment} />
+        <Stack.Screen name="AllWithdrawRequests" component={AllWithdrawRequests} />
         <Stack.Screen
           name="LoanRequestDetails"
           component={LoanRequestDetails}

@@ -16,7 +16,9 @@ import Slider from '@react-native-community/slider';
 
 import {icons, images, COLORS, SIZES, FONTS} from '../constants';
 import {Picker} from '@react-native-picker/picker';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
+
+import {storeWithdrawRequest} from './Actions/WithdrawAction';
 
 function RenderHeader({navigation}) {
   return (
@@ -61,25 +63,25 @@ const WithdrawRequest = ({navigation}) => {
   const DepositData = ['individual', 'jambo account', 'Joint', 'group'];
 
   const user = useSelector(state => state.users.shortUserDetails);
+  const dispatch = useDispatch();
+
   const handleWithRequest = async () => {
     // console.log(user);
-    await firestore()
-      .collection('withdrawRequest')
-      .add({
-        userId: user[0].id,
-        userName: user[0].Name,
-        phoneNumber: user[0].Phone,
-        amount: RangeValue,
-        AccountType: selectedValue,
-      })
-      .then(() => {
-        alert('Withdraw Request Successful');
-        setRangeValue(0);
-        setSelectedValue('');
-      })
-      .catch(error => {
-        console.log('error', error);
-      });
+    let data = {
+      userId: user[0].id,
+      userName: user[0].Name,
+      phoneNumber: user[0].Phone,
+      amount: RangeValue,
+      AccountType: selectedValue,
+      status: 'pending',
+
+      date: Date.now(),
+    };
+    dispatch(storeWithdrawRequest({data}));
+
+    alert('Withdraw Request Successful');
+    setRangeValue(0);
+    setSelectedValue('');
   };
 
   return (

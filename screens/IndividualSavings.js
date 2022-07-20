@@ -5,39 +5,73 @@ import {
   Image,
   TouchableOpacity,
   SafeAreaView,
+  FlatList,
 } from 'react-native';
 import React from 'react';
 
 import {icons, images, COLORS, SIZES, FONTS} from '../constants';
-
-function ReanderStatements() {
-  return (
-    <View
-      style={{
-        width: '100%',
-        height: '100%',
-        backgroundColor: COLORS.white,
-        padding: SIZES.padding2,
-        borderColor: COLORS.primary,
-        borderWidth: 1,
-        borderRadius: 10,
-      }}>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          width: '100%',
-        }}>
-        <Text style={{...FONTS.body3, color: COLORS.primary}}>Kes 600</Text>
-        <Text style={{...FONTS.body3, color: COLORS.primary}}>method</Text>
-        <Text style={{...FONTS.body3, color: COLORS.primary}}>09/21/2021</Text>
-      </View>
-    </View>
-  );
-}
+import {useSelector} from 'react-redux';
+import moment from 'moment';
 
 const IndividualSavings = ({navigation}) => {
   const [showStatement, setShowStatement] = React.useState(false);
+  const deposit = useSelector(state => state.deposit.deposit);
+  const [DepositData, setDepositData] = React.useState([]);
+
+  const AuthUser = useSelector(state => state.users.AuthUser);
+  React.useEffect(() => {
+    // let depositData = useSelector(state => state.deposit.deposit);
+    let temp = [];
+
+    deposit.filter(deposit => {
+      if (deposit.accountType == 'individual') {
+        // console.log(deposit);
+        temp.push(deposit);
+      }
+    });
+
+    setDepositData(temp);
+  }, [deposit]);
+  function ReanderStatements() {
+    return (
+      <View
+        style={{
+          width: '100%',
+          height: '100%',
+          backgroundColor: COLORS.white,
+          padding: SIZES.padding2,
+          borderColor: COLORS.primary,
+          borderWidth: 1,
+          borderRadius: 10,
+        }}>
+        <FlatList
+          data={DepositData}
+          renderItem={({item}) => {
+            return (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  width: '100%',
+                }}>
+                <Text style={{...FONTS.body3, color: COLORS.primary}}>
+                  Kes {item.amount}
+                </Text>
+                <Text style={{...FONTS.body3, color: COLORS.primary}}>
+                  {item.depositMethod}
+                </Text>
+                <Text style={{...FONTS.body3, color: COLORS.primary}}>
+                  {moment(item.date).format('MMMM Do YYYY')}
+                </Text>
+              </View>
+            );
+          }}
+          keyExtractor={(item, index) => index.toString() + item.id}
+        />
+      </View>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={{width: 100, height: 50, padding: SIZES.padding}}>
@@ -64,7 +98,13 @@ const IndividualSavings = ({navigation}) => {
           borderColor: COLORS.primary,
           borderWidth: 1,
         }}>
-        <Text style={{...FONTS.h1, color: COLORS.secondary}}>Ksh 3600</Text>
+        <Text style={{...FONTS.h1, color: COLORS.secondary}}>
+          Ksh
+          {DepositData.filter(item => item.userId === AuthUser[0].uid).reduce(
+            (acc, prev) => Number(acc) + Number(prev.amount),
+            0,
+          )}
+        </Text>
         <Text style={{...FONTS.h1, color: COLORS.primary}}>
           Savings Account
         </Text>

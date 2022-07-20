@@ -9,15 +9,14 @@ import {
   FlatList,
 } from 'react-native';
 import {icons, images, COLORS, SIZES, FONTS} from '../constants';
+import UserData from './UsersData';
 
+import {useSelector} from 'react-redux/';
 import moment from 'moment';
-
-import {useSelector, useDispatch} from 'react-redux/';
-
+import {useDispatch} from 'react-redux';
 import React from 'react';
 
-import { DeleteUser } from './Actions/RegisteredUsers';
-
+import {DeleteLoanPreConditions} from './Actions/loanPrecondtions';
 function RenderTitle({navigation}) {
   return (
     <View
@@ -50,37 +49,20 @@ function RenderTitle({navigation}) {
         }}>
         <Text
           style={{
-            ...FONTS.h4,
+            ...FONTS.h3,
             color: COLORS.primary,
             padding: SIZES.padding,
 
             textAlign: 'center',
           }}>
-          Register Clients
+          All Withdraw Requests
         </Text>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('RegisterClients')}
-          style={{
-            alignSelf: 'center',
-            backgroundColor: COLORS.secondary,
-            padding: SIZES.padding,
-            marginRight: SIZES.padding * 2,
-            borderRadius: 10,
-          }}>
-          <Text
-            style={{
-              color: COLORS.white,
-            }}>
-            New User
-          </Text>
-        </TouchableOpacity>
       </View>
     </View>
   );
 }
 
-const Allusers = ({ navigation }) =>
-{
+const AllWithdrawRequests = ({navigation}) => {
   const dispatch = useDispatch();
   function RenderRequest({item, navigation}) {
     return (
@@ -94,10 +76,10 @@ const Allusers = ({ navigation }) =>
           {moment(item?.date).fromNow()}
         </Text>
         <TouchableOpacity
-          onPress={() => navigation.navigate('RegisterClients', {item})}
+          onPress={() => navigation.navigate('LoanPreCondtions', {item})}
           style={{
             width: '90%',
-            height: 60,
+            height: 40,
             justifyContent: 'space-between',
             flexDirection: 'row',
             alignSelf: 'center',
@@ -109,24 +91,20 @@ const Allusers = ({ navigation }) =>
             backgroundColor: COLORS.white,
             elevation: 3,
           }}>
-          <View>
-            <Text style={{...FONTS.h4, color: COLORS.primary}}>{item.Name}</Text>
-            <Text style={{...FONTS.body5, color: COLORS.primary}}>
-              {item.Phone}
-            </Text>
-          </View>
-          <View style={{flexDirection: 'row', alignSelf: 'center'}}>
+          <Text style={{...FONTS.h4, color: COLORS.primary}}>
+            ({item.userName}- {item.AccountType})
+          </Text>
+          <View style={{flexDirection: 'row'}}>
             <Text
               style={{
                 ...FONTS.h4,
                 color: COLORS.primary,
                 marginRight: 5,
               }}>
-              {item.IdNo}
+              {item.amount} Ksh
             </Text>
             <TouchableOpacity
-            onPress={() => dispatch(DeleteUser({item}))}
-            >
+              onPress={() => dispatch(DeleteLoanPreConditions({item}))}>
               <Image
                 source={icons.trash}
                 resizeMode="contain"
@@ -138,7 +116,7 @@ const Allusers = ({ navigation }) =>
       </View>
     );
   }
-  const Users = useSelector(state => state.users.Users);
+  const withReqData = useSelector(state => state.withdraw.withdrawRequest);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -150,7 +128,7 @@ const Allusers = ({ navigation }) =>
           height: '80%',
         }}>
         <FlatList
-          data={Users}
+          data={withReqData}
           renderItem={({item}) => (
             <RenderRequest item={item} navigation={navigation} />
           )}
@@ -161,7 +139,7 @@ const Allusers = ({ navigation }) =>
   );
 };
 
-export default React.memo(Allusers);
+export default React.memo(AllWithdrawRequests);
 
 const styles = StyleSheet.create({
   container: {

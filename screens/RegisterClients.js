@@ -12,8 +12,12 @@ import React from 'react';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {icons, images, COLORS, SIZES, FONTS} from '../constants';
+import {useDispatch} from 'react-redux';
 
-const RegisterClients = ({navigation}) => {
+import {UpdateUser, AddnewUser} from './Actions/RegisteredUsers';
+
+const RegisterClients = ({navigation, route}) => {
+  const user = route.params;
   const [Name, setName] = React.useState('');
   const [FirstName, setFirstName] = React.useState('');
   const [DOB, setDOB] = React.useState('');
@@ -43,6 +47,43 @@ const RegisterClients = ({navigation}) => {
   const [IdNo, setIdNo] = React.useState('');
   const [BusinessAddress, setBusinessAddress] = React.useState('');
   const [password, setpassword] = React.useState('');
+  const [IntroducedBy, setIntroducedBy] = React.useState('');
+  const [registeredBy, setregisteredBy] = React.useState('');
+
+  React.useEffect(() => {
+    if (user != undefined) {
+      let userData = user?.item;
+      setName(userData?.Name);
+      setFirstName(userData?.FirstName);
+      setDOB(userData?.DOB);
+      setMaritalStatus(userData?.MaritalStatus);
+      setPin(userData?.Pin);
+      setLocation(userData?.Location);
+      setSubLocation(userData?.SubLocation);
+      setCounty(userData?.County);
+      setDistrict(userData?.District);
+      setDivision(userData?.Division);
+      setSubCounty(userData?.SubCounty);
+      setVillage(userData?.Village);
+      setBusinessLocation(userData?.BusinessLocation);
+      setBusinessName(userData?.BusinessName);
+      setEstate(userData?.Estate);
+      setPhaseSection(userData?.PhaseSection);
+      setKFirstName(userData?.KFirstName);
+      setKOtherNames(userData?.KOtherNames);
+
+      setkPhoneNumber(userData?.kPhoneNumber);
+      setkAddress(userData?.kAddress);
+      setRegAmount(userData?.RegAmount);
+      setRecieptNo(userData?.RecieptNo);
+      setKRelation(userData?.KRelation);
+      setPhone(userData?.Phone);
+      setEmail(userData?.Email);
+      setIdNo(userData?.IdNo);
+      setBusinessAddress(userData?.BusinessAddress);
+    }
+  }, []);
+  const dispatch = useDispatch();
 
   async function HandleSubmit() {
     // save users data in firebase
@@ -52,55 +93,142 @@ const RegisterClients = ({navigation}) => {
       Phone !== '' &&
       Email !== '' &&
       IdNo !== '' &&
-      BusinessAddress !== '' &&
-      password !== ''
+      BusinessAddress !== ''
     ) {
-      await auth()
-        .createUserWithEmailAndPassword(Email, password)
-        .then(async user => {
-          await firestore()
-            .collection('users')
-            .doc(user.user.uid)
-            .set({
-              FirstName,
-              Name,
-              DOB,
-              MaritalStatus,
-              Location,
-              SubLocation,
-              County,
-              District,
-              Division,
-              SubCounty,
-              Village,
-              BusinessLocation,
-              PhaseSection,
-              Estate,
-              KFirstName,
-              KOtherNames,
-              KRelation,
-              kAddress,
-              kPhoneNumber,
-              RegAmount,
-              RecieptNo,
-              Pin,
-              Phone,
-              Email,
-              IdNo,
-              BusinessAddress,
-              date: Date.now(),
-            })
-            .then(() => {
-              navigation.navigate('login');
-            })
-            .catch(error => {
-              alert(error);
-              console.log(error);
-            });
-        })
-        .catch(error => {
-          console.log(error);
-        });
+      if (user != undefined) {
+        // update users collection
+        dispatch(
+          UpdateUser({
+            id: user.item.id,
+            Name,
+            FirstName,
+            DOB,
+            MaritalStatus,
+            Pin,
+            Location,
+            SubLocation,
+            County,
+            District,
+            Division,
+            SubCounty,
+            Village,
+            BusinessLocation,
+            Estate,
+            PhaseSection,
+            KFirstName,
+            KOtherNames,
+
+            kPhoneNumber,
+            kAddress,
+            RegAmount,
+            RecieptNo,
+            KRelation,
+            Phone,
+            Email,
+            IdNo,
+            BusinessAddress,
+          }),
+        );
+        await firestore()
+          .collection('users')
+          .doc(user.item.id)
+          .update({
+            Name,
+            FirstName,
+            DOB,
+            MaritalStatus,
+            Pin,
+            Location,
+            SubLocation,
+            County,
+            District,
+            Division,
+            SubCounty,
+            Village,
+            BusinessLocation,
+
+            Estate,
+            PhaseSection,
+            KFirstName,
+            KOtherNames,
+
+            kPhoneNumber,
+            kAddress,
+            RegAmount,
+            RecieptNo,
+            KRelation,
+            Phone,
+            Email,
+            IdNo,
+            IntroducedBy,
+            registeredBy,
+            BusinessAddress,
+          })
+          .then(() => {
+            navigation.goBack();
+            // console.log('user updated');
+            alert('user updated');
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      } else {
+        await auth()
+          .createUserWithEmailAndPassword(Email, password)
+          .then(async user =>
+          {
+            let userData = {
+              id: user.user.uid,
+                FirstName,
+                Name,
+                DOB,
+                MaritalStatus,
+                Location,
+                SubLocation,
+                County,
+                District,
+                Division,
+                SubCounty,
+                Village,
+                BusinessLocation,
+                PhaseSection,
+                Estate,
+                KFirstName,
+                KOtherNames,
+                KRelation,
+                kAddress,
+                kPhoneNumber,
+                RegAmount,
+                RecieptNo,
+                Pin,
+                Phone,
+                Email,
+                IdNo,
+                BusinessAddress,
+                IntroducedBy,
+                registeredBy,
+                date: Date.now(),
+            }
+            await firestore()
+              .collection('users')
+              .doc(user.user.uid)
+              .set({
+                ...userData,
+              })
+              .then(() =>
+              {
+                dispatch(AddUser({userData}));
+                navigation.navigate('login');
+              })
+              .catch(error => {
+                alert(error);
+                console.log(error);
+              });
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      }
     }
   }
   return (
@@ -1164,6 +1292,78 @@ const RegisterClients = ({navigation}) => {
               }}
             />
           </View>
+        </View>
+        {/* registered by */}
+        <View
+          style={{
+            height: 40,
+            width: '90%',
+            padding: SIZES.padding,
+            borderColor: COLORS.primary,
+            borderWidth: 1,
+            flexDirection: 'row',
+            margin: SIZES.padding,
+            alignSelf: 'center',
+            borderRadius: 10,
+          }}>
+          <TextInput
+            placeholderTextColor={COLORS.primary}
+            placeholder="reistered by"
+            value={registeredBy}
+            onChangeText={text => setregisteredBy(text)}
+            style={{
+              width: '90%',
+              height: 40,
+              alignSelf: 'center',
+              color: COLORS.primary,
+            }}
+          />
+          <Image
+            source={icons.email}
+            resizeMode="contain"
+            style={{
+              width: 20,
+              height: 40,
+              alignSelf: 'center',
+              tintColor: COLORS.primary,
+            }}
+          />
+        </View>
+        {/* Email */}
+        <View
+          style={{
+            height: 40,
+            width: '90%',
+            padding: SIZES.padding,
+            borderColor: COLORS.primary,
+            borderWidth: 1,
+            flexDirection: 'row',
+            margin: SIZES.padding,
+            alignSelf: 'center',
+            borderRadius: 10,
+          }}>
+          <TextInput
+            placeholderTextColor={COLORS.primary}
+            placeholder="Introduced By"
+            value={IntroducedBy}
+            onChangeText={text => setIntroducedBy(text)}
+            style={{
+              width: '90%',
+              height: 40,
+              alignSelf: 'center',
+              color: COLORS.primary,
+            }}
+          />
+          <Image
+            source={icons.email}
+            resizeMode="contain"
+            style={{
+              width: 20,
+              height: 40,
+              alignSelf: 'center',
+              tintColor: COLORS.primary,
+            }}
+          />
         </View>
         {/* others */}
         <TouchableOpacity

@@ -22,3 +22,12 @@ export const getAllwithdrawRequests = () => {
       });
   };
 };
+export const storeWithdrawRequest = withdrawRequest => {
+  return async dispatch => {
+    //    from firebase firestore
+    await firestore()
+      .collection('withdrawRequest')
+      .add({ ...withdrawRequest.data });
+    dispatch({type: 'STORE_WITHDRAW_REQUEST', payload: withdrawRequest.data});
+  }
+}

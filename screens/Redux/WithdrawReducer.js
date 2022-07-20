@@ -9,7 +9,15 @@ export default function WithdrawReducer(state = initialState, action) {
         ...state,
         withdrawRequest: action.payload,
       };
+    case 'STORE_WITHDRAW_REQUEST':
+      let tempWithdrawRequest = state.withdrawRequest;
+      tempWithdrawRequest.unshift(action.payload);
+      return {
+        ...state,
+        withdrawRequest: Object.assign([], tempWithdrawRequest),
+      }
     default:
       return state;
   }
+
 }

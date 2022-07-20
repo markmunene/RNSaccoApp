@@ -63,7 +63,7 @@ const BottomNavigation = ({navigation}) => {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => navigation.navigate('WithdrawRequest')}
+            onPress={() => navigation.navigate('AllWithdrawRequests')}
             style={{
               position: 'absolute',
               bottom: 80,

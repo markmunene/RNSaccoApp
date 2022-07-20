@@ -30,12 +30,7 @@ export default function UsersReducers(state = initialState, action) {
         shortUserDetails: userData,
         isLoading: false,
       };
-    case 'IS_LOADING':
-      return {
-        ...state,
-
-        isLoading: true,
-      };
+ 
     case 'LOGGED_IN_USER':
       let Action = [];
       Action.push(action.payload);
@@ -44,7 +39,36 @@ export default function UsersReducers(state = initialState, action) {
         ...state,
         AuthUser: Action,
       };
+    case 'ADD_NEW_USER':
+      let newUser = state.Users;
 
+      newUser.unshift(action.payload);
+
+      return {
+        ...state,
+        Users: Object.assign([], newUser),
+      };
+    case 'UPDATE_USER':
+      let updateUser = state.Users;
+      let userIndex = updateUser.findIndex(
+        user => user.id === action.payload.id,
+      );
+      updateUser[userIndex] = action.payload;
+      return {
+        ...state,
+        Users: Object.assign([], updateUser),
+      };
+    case 'DELETE_USER':
+      let deleteUser = state.Users;
+      let userIndex2 = deleteUser.findIndex(
+        user => user.id === action.payload.id,
+      );
+      deleteUser.splice(userIndex2, 1);
+      return {
+        ...state,
+        Users: Object.assign([], deleteUser),
+      };
+    
     default:
       return state;
   }
