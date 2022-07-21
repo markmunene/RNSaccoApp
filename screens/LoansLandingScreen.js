@@ -11,7 +11,8 @@ import React from 'react';
 import {icons, images, COLORS, SIZES, FONTS} from '../constants';
 import {Picker} from '@react-native-picker/picker';
 import Slider from '@react-native-community/slider';
-import UserData from './UsersData';
+// import UserData from './UsersData';
+import {useSelector} from 'react-redux';
 
 const RenderTitle = ({navigation}) => {
   return (
@@ -111,10 +112,10 @@ const LoanDetails = ({item, navigation}) => {
         <View style={{padding: SIZES.padding2, width: '100%'}}>
           <Text style={{...FONTS.h3, color: COLORS.primary}}>Loan Balance</Text>
           <Text style={{...FONTS.h2, color: COLORS.secondary}}>
-            Ksh 3600 {item.id}
+            Ksh {item.Balance}
           </Text>
           <Text style={{...FONTS.h4, color: COLORS.primary}}>
-            Due Date: 2022/8/17
+            Due Date: {item.DueDate}
           </Text>
         </View>
         <View
@@ -131,11 +132,13 @@ const LoanDetails = ({item, navigation}) => {
               width: '95%',
             }}>
             <TouchableOpacity
-              onPress={() => navigation.navigate('GroupTransactions')}
+              onPress={() =>
+                navigation.navigate('LoanPayementHistory', {id: item.id})
+              }
               style={{
                 backgroundColor: 'transparent',
                 // padding: SIZES.padding,
-                height: 40,
+                height: 30,
                 width: 100,
                 borderRadius: 20,
                 justifyContent: 'center',
@@ -146,12 +149,12 @@ const LoanDetails = ({item, navigation}) => {
               <Text style={{...FONTS.h4, color: COLORS.primary}}>History</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => navigation.navigate('LoanPayment')}
+              onPress={() => navigation.navigate('LoanPayment', {item})}
               style={{
                 backgroundColor: 'transparent',
 
-                height: 40,
-                width: 120,
+                height: 30,
+                width: 100,
                 borderRadius: 20,
                 justifyContent: 'center',
                 alignItems: 'center',
@@ -170,13 +173,25 @@ const LoanDetails = ({item, navigation}) => {
 };
 
 const LoansLandingScreen = ({navigation}) => {
+  const Loandata = useSelector(state => state.loanRequests.ApprovedLoans);
+  const [FilteredLoans, setFilteredLoans] = React.useState('');
+  const AuthUser = useSelector(state => state.users.AuthUser);
+  React.useEffect(() => {
+    let tempData = [];
+    Loandata.filter(item => {
+      if (item.user_id === AuthUser[0].uid) {
+        tempData.push(item);
+      }
+    });
+    setFilteredLoans(tempData);
+  }, [Loandata]);
   return (
     <SafeAreaView style={styles.container}>
       <RenderTitle navigation={navigation} />
 
       <FlatList
-        data={[1, 2, 3, 4, 5, 6, 7, 8, 9, 56]}
-        keyExtractor={(item, index) => index.toString()}
+        data={FilteredLoans}
+        keyExtractor={(item, index) => index.toString() + item.id}
         renderItem={({item}) => (
           <LoanDetails item={item} navigation={navigation} />
         )}

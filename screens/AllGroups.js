@@ -8,9 +8,12 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import React from 'react';
-import {icons, images, COLORS, SIZES, FONTS} from '../constants';
+import { icons, images, COLORS, SIZES, FONTS } from '../constants';
+import { useSelector } from 'react-redux';
 
-const AllGroups = ({navigation}) => {
+
+const AllGroups = ({ navigation }) =>
+{
   const [shiftBewteenGroups, setShiftBewteenGroups] = React.useState(false);
 
   const HandleToggle = () => {

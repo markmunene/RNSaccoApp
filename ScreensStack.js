@@ -35,13 +35,20 @@ const Stack = createNativeStackNavigator();
 import {useDispatch, useSelector} from 'react-redux';
 import {getAllpreconditions} from './screens/Actions/loanPrecondtions';
 import {getJoints, getGroups} from './screens/Actions/Accounts';
-import {LoginAction} from './screens/Actions/LoginAction';
+import { LoginAction } from './screens/Actions/LoginAction';
+import LoanPayementHistory from './screens/LoanPayementHistory';
 
 import auth from '@react-native-firebase/auth';
 
 import {RegisteredUsers} from './screens/Actions/RegisteredUsers';
 import { getAllwithdrawRequests } from './screens/Actions/WithdrawAction';
 import { getAllDeposits } from './screens/Actions/DepositAction';
+import {
+  getLoanRequest,
+  getLoanPayment,
+  getApprovedLoans,
+} from './screens/Actions/LoanRequestAction';
+
 
 
 const Screenstack = () => {
@@ -64,6 +71,9 @@ const Screenstack = () => {
       dispatch(getGroups());
       dispatch(getAllwithdrawRequests());
       dispatch(getAllDeposits());
+      dispatch(getLoanRequest());
+      dispatch(getApprovedLoans());
+      dispatch(getLoanPayment());
     }
     return () => {
       isMounted = false;
@@ -81,12 +91,19 @@ const Screenstack = () => {
         <Stack.Screen name="login" component={Login} />
         <Stack.Screen name="GroupTransactions" component={GroupTransactions} />
         <Stack.Screen name="LoanPayment" component={LoanPayment} />
-        <Stack.Screen name="AllWithdrawRequests" component={AllWithdrawRequests} />
+        <Stack.Screen
+          name="AllWithdrawRequests"
+          component={AllWithdrawRequests}
+        />
+        
+        <Stack.Screen
+          name="LoanPayementHistory"
+          component={LoanPayementHistory}
+        />
         <Stack.Screen
           name="LoanRequestDetails"
           component={LoanRequestDetails}
         />
-
         <Stack.Screen
           name="LoansLandingScreen"
           component={LoansLandingScreen}
@@ -100,7 +117,6 @@ const Screenstack = () => {
         <Stack.Screen name="LoanRequest" component={LoanRequest} />
         <Stack.Screen name="LoanRequestAdmin" component={LoanRequestAdmin} />
         <Stack.Screen name="AdminRoute" component={AdminRoute} />
-
         <Stack.Screen
           name="AllLoanPolicyCondtions"
           component={AllLoanPolicyCondtions}

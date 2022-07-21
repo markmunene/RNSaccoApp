@@ -182,6 +182,7 @@ const LoanPreCondtions = ({navigation, route}) => {
         }}>
         <View
           style={{
+            ...styles.fieldSet,
             height: 40,
             width: '90%',
             padding: SIZES.padding,
@@ -192,9 +193,8 @@ const LoanPreCondtions = ({navigation, route}) => {
             alignSelf: 'center',
             borderRadius: 10,
           }}>
+          <Text style={styles.legend}>Loan RangeFrom</Text>
           <TextInput
-            placeholderTextColor={COLORS.primary}
-            placeholder="Loan Range from"
             keyboardType="numeric"
             value={RangeFrom}
             onChangeText={text => setRangeFrom(text)}
@@ -218,6 +218,7 @@ const LoanPreCondtions = ({navigation, route}) => {
         </View>
         <View
           style={{
+            ...styles.fieldSet,
             height: 40,
             width: '90%',
             padding: SIZES.padding,
@@ -228,9 +229,9 @@ const LoanPreCondtions = ({navigation, route}) => {
             alignSelf: 'center',
             borderRadius: 10,
           }}>
+          <Text style={styles.legend}>Loan Range to</Text>
           <TextInput
-            placeholderTextColor={COLORS.primary}
-            placeholder="loan Range To"
+            
             keyboardType="numeric"
             value={RangeTo}
             onChangeText={text => setRangeTo(text)}
@@ -254,6 +255,7 @@ const LoanPreCondtions = ({navigation, route}) => {
         </View>
         <View
           style={{
+            ...styles.fieldSet,
             height: 40,
             width: '90%',
             padding: SIZES.padding,
@@ -264,9 +266,9 @@ const LoanPreCondtions = ({navigation, route}) => {
             alignSelf: 'center',
             borderRadius: 10,
           }}>
+          <Text style={styles.legend}>InterestRate</Text>
           <TextInput
-            placeholderTextColor={COLORS.primary}
-            placeholder="Interest Rate"
+           
             keyboardType="numeric"
             value={InterestRate}
             onChangeText={text => setInterestRate(text)}
@@ -290,6 +292,7 @@ const LoanPreCondtions = ({navigation, route}) => {
         </View>
         <View
           style={{
+            ...styles.fieldSet,
             height: 40,
             width: '90%',
             padding: SIZES.padding,
@@ -300,9 +303,9 @@ const LoanPreCondtions = ({navigation, route}) => {
             alignSelf: 'center',
             borderRadius: 10,
           }}>
+          <Text style={styles.legend}>Duration</Text>
           <TextInput
-            placeholderTextColor={COLORS.primary}
-            placeholder="Duration"
+            
             value={Duration}
             keyboardType="numeric"
             onChangeText={text => setDuration(text)}
@@ -314,7 +317,7 @@ const LoanPreCondtions = ({navigation, route}) => {
             }}
           />
           <Image
-            source={icons.email}
+            source={icons.business}
             resizeMode="contain"
             style={{
               width: 20,
@@ -326,6 +329,7 @@ const LoanPreCondtions = ({navigation, route}) => {
         </View>
         <View
           style={{
+            ...styles.fieldSet,
             height: 40,
             width: '90%',
             padding: SIZES.padding,
@@ -336,9 +340,9 @@ const LoanPreCondtions = ({navigation, route}) => {
             alignSelf: 'center',
             borderRadius: 10,
           }}>
+          <Text style={styles.legend}>Fine</Text>
           <TextInput
-            placeholderTextColor={COLORS.primary}
-            placeholder="Fine"
+           
             keyboardType="numeric"
             value={Fine}
             onChangeText={text => setFine(text)}
@@ -385,5 +389,24 @@ export default React.memo(LoanPreCondtions);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: COLORS.white,
+  },
+  fieldSet: {
+    margin: 10,
+    paddingHorizontal: 10,
+    paddingBottom: 10,
+    borderRadius: 5,
+    borderWidth: 1,
+    alignItems: 'center',
+    borderColor: '#000',
+  },
+  legend: {
+    position: 'absolute',
+    top: -12,
+    left: 10,
+    fontWeight: 'bold',
+    backgroundColor: '#fff',
+    color: COLORS.primary,
+    borderRadius: 2,
   },
 });

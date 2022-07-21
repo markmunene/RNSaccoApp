@@ -13,6 +13,8 @@ import {icons, images, COLORS, SIZES, FONTS} from '../constants';
 import {useSelector} from 'react-redux';
 
 const GroupjointsClientSide = ({navigation}) => {
+  let depositData = useSelector(state => state.deposit.deposit);
+
   const groups = useSelector(state => state.accounts.groups);
   const joints = useSelector(state => state.accounts.joints);
 
@@ -125,7 +127,12 @@ const GroupjointsClientSide = ({navigation}) => {
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => navigation.navigate('GroupTransactions',{type:'Transactions', item})}
+                onPress={() =>
+                  navigation.navigate('GroupTransactions', {
+                    type: 'Transactions',
+                    item,
+                  })
+                }
                 style={{
                   backgroundColor: 'transparent',
                   borderRadius: 20,
@@ -226,7 +233,7 @@ const GroupjointsClientSide = ({navigation}) => {
 
       <FlatList
         data={GroupsState}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(item, index) => index.toString() + item.id}
         renderItem={({item}) => <LoanDetails item={item} />}
       />
     </SafeAreaView>

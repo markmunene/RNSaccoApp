@@ -11,6 +11,10 @@ import {
 import React from 'react';
 import {icons, images, COLORS, SIZES, FONTS} from '../constants';
 import {BarChart} from 'react-native-chart-kit';
+import moment from 'moment';
+import {useSelector, useDispatch} from 'react-redux';
+import firestore from '@react-native-firebase/firestore';
+import {updateLoanRequest, addApprovedLoan} from './Actions/LoanRequestAction';
 
 function RenderTitle({navigation}) {
   return (
@@ -109,14 +113,35 @@ function RenderBarGraph() {
   );
 }
 
-const IndividualSavings = ({navigation}) => {
+const IndividualSavings = ({navigation, loanData}) => {
   const [showStatement, setShowStatement] = React.useState(false);
+  const dispatch = useDispatch();
+  const HandleLoanAproval = async () => {
+    //  add loan to firestore
+    //  update loan status to approved
+
+    dispatch(updateLoanRequest({...loanData, status: 'approved'}));
+    // create a new loan
+    // console.log(loanData);
+    let newLoanData = {
+      amount: loanData.LoanAmount,
+      DueDate: loanData.dueDate,
+      Balance: loanData.LoanAmount,
+      date: moment().format('MMMM Do YYYY'),
+      loan_id: loanData.id,
+      status: 'approved',
+      user_id: loanData.user[0].id,
+      Name: loanData.user[0].Name,
+    };
+    dispatch(addApprovedLoan({...newLoanData}));
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View
         style={{
           width: '95%',
-          height: '50%',
+          height: '45%',
           padding: SIZES.padding2,
           alignSelf: 'center',
           backgroundColor: COLORS.white,
@@ -124,10 +149,18 @@ const IndividualSavings = ({navigation}) => {
           borderColor: COLORS.primary,
           borderWidth: 1,
         }}>
-        <Text style={{...FONTS.h1, color: COLORS.primary}}>Loan Amount</Text>
-        <Text style={{...FONTS.h2, color: COLORS.secondary}}>$ 3600</Text>
+        <Text style={{...FONTS.h2, color: COLORS.primary}}>Loan Amount</Text>
+        <Text style={{...FONTS.h3, color: COLORS.secondary}}>
+          Ksh {loanData.LoanAmount}
+        </Text>
         <Text style={{...FONTS.h4, color: COLORS.primary}}>
-          Name : Mark Munene
+          Name : {loanData.user[0].Name}
+        </Text>
+        <Text style={{...FONTS.h4, color: COLORS.primary}}>
+          DueDate : {moment(loanData.dueDate).format('MMMM Do YYYY')}
+        </Text>
+        <Text style={{...FONTS.h4, color: COLORS.primary}}>
+          Date : {moment(loanData.date).format('MMMM Do YYYY')}
         </Text>
 
         <View
@@ -135,20 +168,24 @@ const IndividualSavings = ({navigation}) => {
             justifyContent: 'space-between',
             flexDirection: 'row',
             width: '100%',
-            height: '40%',
+            height: '30%',
             alignSelf: 'center',
           }}>
           <TouchableOpacity
+            onPress={() => HandleLoanAproval()}
             style={{
               backgroundColor: COLORS.primary,
               justifyContent: 'center',
               alignItems: 'center',
               borderRadius: SIZES.padding2,
-              padding: SIZES.padding2,
-              height: 50,
+              padding: SIZES.padding,
+              // height: 50,
               alignSelf: 'center',
             }}>
-            <Text style={{color: COLORS.white, ...FONTS.h4}}> Approve</Text>
+            <Text style={{color: COLORS.white, ...FONTS.h4}}>
+              {' '}
+              {loanData.status}
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={{
@@ -157,7 +194,7 @@ const IndividualSavings = ({navigation}) => {
               alignItems: 'center',
               borderRadius: SIZES.padding2,
               padding: SIZES.padding2,
-              height: 50,
+              // height: 50,
               alignSelf: 'center',
             }}>
             <Text
@@ -199,12 +236,14 @@ const IndividualSavings = ({navigation}) => {
     </SafeAreaView>
   );
 };
-const LoanRequestDetails = ({navigation}) => {
+const LoanRequestDetails = ({navigation, route}) => {
+  const loandata = route.params;
+  // console.log(loandata);
   return (
     <SafeAreaView style={styles.container}>
       <RenderTitle navigation={navigation} />
       {/*  */}
-      <IndividualSavings />
+      <IndividualSavings loanData={loandata?.item} />
     </SafeAreaView>
   );
 };

@@ -278,7 +278,8 @@ function RenderOptions({navigation}) {
               backgroundColor: COLORS.white,
               justifyContent: 'center',
               alignItems: 'center',
-              marginRight: SIZES.padding * 3,
+              marginLeft: SIZES.padding,
+              marginRight: SIZES.padding,
               elevation: 5,
               borderRadius: 10,
             }}>

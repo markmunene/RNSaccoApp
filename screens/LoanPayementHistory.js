@@ -8,15 +8,13 @@ import {
   TouchableOpacity,
   FlatList,
 } from 'react-native';
-import {icons, images, COLORS, SIZES, FONTS} from '../constants';
-import UserData from './UsersData';
-
-import {useSelector} from 'react-redux';
+import { icons, images, COLORS, SIZES, FONTS } from '../constants';
+import moment from 'moment';
 
 import React from 'react';
-
-
-function RenderTitle({navigation}) {
+import {useSelector} from 'react-redux';
+// import {Colors} from 'react-native/Libraries/NewAppScreen';
+function RenderTitle({navigation, title}) {
   return (
     <View
       style={{
@@ -47,22 +45,20 @@ function RenderTitle({navigation}) {
           width: '80%',
           textAlign: 'center',
         }}>
-        Loan Requests
+        {title}
       </Text>
     </View>
   );
 }
 
-const LoanRequestAdmin = ({ navigation }) =>
-{
-  const LoanRequest = useSelector(state => state.loanRequests.loanRequest);
-  function RenderRequest({item, navigation}) {
-    return (
+// const RenderTransactions
+function RenderTransactions({item}) {
+  return (
+    <View>
       <TouchableOpacity
-        onPress={() => navigation.navigate('LoanRequestDetails', {item})}
         style={{
           width: '90%',
-          height: 40,
+          height: 50,
           justifyContent: 'space-between',
           flexDirection: 'row',
           alignSelf: 'center',
@@ -74,9 +70,11 @@ const LoanRequestAdmin = ({ navigation }) =>
           backgroundColor: COLORS.white,
           elevation: 3,
         }}>
-        <Text style={{...FONTS.h4, color: COLORS.primary}}>
-          {item.user[0]?.Name}
-        </Text>
+        <View style={{flexDirection: 'row'}}>
+          <Text style={{...FONTS.h4, color: COLORS.primary}}>
+           Ksh {item.Amount}
+          </Text>
+        </View>
         <View style={{flexDirection: 'row'}}>
           <Text
             style={{
@@ -84,34 +82,44 @@ const LoanRequestAdmin = ({ navigation }) =>
               color: COLORS.primary,
               marginRight: 5,
             }}>
-            {item.LoanAmount}
+            {moment(item.Date).format('MMM DD, YYYY')}
           </Text>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('LoanRequestDetails', {item})}>
-            <Image
-              source={icons.right}
-              resizeMode="contain"
-              style={{width: 25, height: 25}}
-            />
-          </TouchableOpacity>
         </View>
       </TouchableOpacity>
-    );
-  }
+    </View>
+  );
+}
+const LoanPaymentHistory = ({navigation, route}) => {
+    let loanId = route.params;
+    let payementHistory = useSelector(state => state.loanRequests.LoanPayment);
+    console.log(payementHistory);
+    
+  const [data, setData] = React.useState([]);
+ 
+    React.useEffect(() =>
+    {
+        let tempData = [];
+        payementHistory.filter(item => {
+          if (loanId.id == item.LoanId)
+          {
+            tempData.push(item);
+          }
+          
+        });
+    setData(tempData);
+  }, [route.params]);
   return (
     <SafeAreaView style={styles.container}>
-      <RenderTitle navigation={navigation} />
+      <RenderTitle navigation={navigation} title='Loan Transactions' />
       {/* renderRequuest */}
       <View
         style={{
           width: '100%',
-          height: '95%',
+          height: '80%',
         }}>
         <FlatList
-          data={LoanRequest}
-          renderItem={({item}) => (
-            <RenderRequest item={item} navigation={navigation} />
-          )}
+          data={data}
+          renderItem={({item}) => <RenderTransactions item={item} />}
           keyExtractor={(item, index) => index.toString() + item.id}
         />
       </View>
@@ -119,7 +127,7 @@ const LoanRequestAdmin = ({ navigation }) =>
   );
 };
 
-export default React.memo(LoanRequestAdmin);
+export default React.memo(LoanPaymentHistory);
 
 const styles = StyleSheet.create({
   container: {

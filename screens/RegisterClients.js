@@ -261,6 +261,7 @@ const RegisterClients = ({navigation, route}) => {
           }}>
           <View
             style={{
+              ...styles.fieldSet,
               height: 40,
               width: '45%',
 
@@ -272,9 +273,10 @@ const RegisterClients = ({navigation, route}) => {
               alignSelf: 'center',
               borderRadius: 10,
             }}>
+            <Text style={styles.legend}>FirstName</Text>
+
             <TextInput
-              placeholderTextColor={COLORS.primary}
-              placeholder="First Name"
+              
               value={FirstName}
               onChangeText={text => setFirstName(text)}
               style={{
@@ -284,19 +286,10 @@ const RegisterClients = ({navigation, route}) => {
                 color: COLORS.primary,
               }}
             />
-            <Image
-              source={icons.user}
-              resizeMode="contain"
-              style={{
-                width: 20,
-                height: 40,
-                alignSelf: 'center',
-                tintColor: COLORS.primary,
-              }}
-            />
           </View>
           <View
             style={{
+              ...styles.fieldSet,
               height: 40,
               width: '45%',
               padding: SIZES.padding,
@@ -307,9 +300,9 @@ const RegisterClients = ({navigation, route}) => {
               alignSelf: 'center',
               borderRadius: 10,
             }}>
+            <Text style={styles.legend}>Other Names</Text>
             <TextInput
-              placeholderTextColor={COLORS.primary}
-              placeholder="Others"
+              
               value={Name}
               onChangeText={text => setName(text)}
               style={{
@@ -317,16 +310,6 @@ const RegisterClients = ({navigation, route}) => {
                 height: 40,
                 alignSelf: 'center',
                 color: COLORS.primary,
-              }}
-            />
-            <Image
-              source={icons.user}
-              resizeMode="contain"
-              style={{
-                width: 20,
-                height: 40,
-                alignSelf: 'center',
-                tintColor: COLORS.primary,
               }}
             />
           </View>
@@ -340,6 +323,7 @@ const RegisterClients = ({navigation, route}) => {
           {/* phone number */}
           <View
             style={{
+              ...styles.fieldSet,
               height: 40,
               width: '45%',
               padding: SIZES.padding,
@@ -350,9 +334,9 @@ const RegisterClients = ({navigation, route}) => {
               alignSelf: 'center',
               borderRadius: 10,
             }}>
+            <Text style={styles.legend}>phone </Text>
             <TextInput
-              placeholderTextColor={COLORS.primary}
-              placeholder="phone number"
+             
               keyboardType="number-pad"
               value={Phone}
               onChangeText={text => setPhone(text)}
@@ -363,20 +347,11 @@ const RegisterClients = ({navigation, route}) => {
                 color: COLORS.primary,
               }}
             />
-            <Image
-              source={icons.phone}
-              resizeMode="contain"
-              style={{
-                width: 20,
-                height: 40,
-                alignSelf: 'center',
-                tintColor: COLORS.primary,
-              }}
-            />
           </View>
           {/* id number */}
           <View
             style={{
+              ...styles.fieldSet,
               height: 40,
               width: '45%',
               padding: SIZES.padding,
@@ -387,9 +362,9 @@ const RegisterClients = ({navigation, route}) => {
               alignSelf: 'center',
               borderRadius: 10,
             }}>
+            <Text style={styles.legend}>ID</Text>
             <TextInput
-              placeholderTextColor={COLORS.primary}
-              placeholder="ID Number"
+              
               keyboardType="number-pad"
               value={IdNo}
               onChangeText={text => setIdNo(text)}
@@ -398,16 +373,6 @@ const RegisterClients = ({navigation, route}) => {
                 height: 40,
                 alignSelf: 'center',
                 color: COLORS.primary,
-              }}
-            />
-            <Image
-              source={icons.card}
-              resizeMode="contain"
-              style={{
-                width: 20,
-                height: 40,
-                alignSelf: 'center',
-                tintColor: COLORS.primary,
               }}
             />
           </View>
@@ -421,6 +386,7 @@ const RegisterClients = ({navigation, route}) => {
           }}>
           <View
             style={{
+              ...styles.fieldSet,
               height: 40,
               width: '45%',
 
@@ -432,9 +398,9 @@ const RegisterClients = ({navigation, route}) => {
               alignSelf: 'center',
               borderRadius: 10,
             }}>
+            <Text style={styles.legend}>DOB</Text>
             <TextInput
-              placeholderTextColor={COLORS.primary}
-              placeholder="Date of Birth"
+            
               value={DOB}
               onChangeText={text => setDOB(text)}
               style={{
@@ -444,19 +410,10 @@ const RegisterClients = ({navigation, route}) => {
                 color: COLORS.primary,
               }}
             />
-            <Image
-              source={icons.user}
-              resizeMode="contain"
-              style={{
-                width: 20,
-                height: 40,
-                alignSelf: 'center',
-                tintColor: COLORS.primary,
-              }}
-            />
           </View>
           <View
             style={{
+              ...styles.fieldSet,
               height: 40,
               width: '45%',
               padding: SIZES.padding,
@@ -467,9 +424,9 @@ const RegisterClients = ({navigation, route}) => {
               alignSelf: 'center',
               borderRadius: 10,
             }}>
+            <Text style={styles.legend}>Marital status</Text>
             <TextInput
-              placeholderTextColor={COLORS.primary}
-              placeholder="Marital Status"
+              
               value={MaritalStatus}
               onChangeText={text => setMaritalStatus(text)}
               style={{
@@ -477,16 +434,6 @@ const RegisterClients = ({navigation, route}) => {
                 height: 40,
                 alignSelf: 'center',
                 color: COLORS.primary,
-              }}
-            />
-            <Image
-              source={icons.user}
-              resizeMode="contain"
-              style={{
-                width: 20,
-                height: 40,
-                alignSelf: 'center',
-                tintColor: COLORS.primary,
               }}
             />
           </View>
@@ -502,6 +449,7 @@ const RegisterClients = ({navigation, route}) => {
           {/* business address */}
           <View
             style={{
+              ...styles.fieldSet,
               height: 40,
               width: '45%',
               padding: SIZES.padding,
@@ -512,9 +460,8 @@ const RegisterClients = ({navigation, route}) => {
               alignSelf: 'center',
               borderRadius: 10,
             }}>
+            <Text style={styles.legend}>Business Name</Text>
             <TextInput
-              placeholderTextColor={COLORS.primary}
-              placeholder="Business Name"
               value={BusinessAddress}
               onChangeText={text => setBusinessAddress(text)}
               style={{
@@ -524,19 +471,10 @@ const RegisterClients = ({navigation, route}) => {
                 color: COLORS.primary,
               }}
             />
-            <Image
-              source={icons.business}
-              resizeMode="contain"
-              style={{
-                width: 20,
-                height: 40,
-                alignSelf: 'center',
-                tintColor: COLORS.primary,
-              }}
-            />
           </View>
           <View
             style={{
+              ...styles.fieldSet,
               height: 40,
               width: '45%',
               padding: SIZES.padding,
@@ -547,9 +485,8 @@ const RegisterClients = ({navigation, route}) => {
               alignSelf: 'center',
               borderRadius: 10,
             }}>
+            <Text style={styles.legend}>Business Location</Text>
             <TextInput
-              placeholderTextColor={COLORS.primary}
-              placeholder="Business Location"
               value={BusinessLocation}
               onChangeText={text => setBusinessLocation(text)}
               style={{
@@ -559,16 +496,6 @@ const RegisterClients = ({navigation, route}) => {
                 color: COLORS.primary,
               }}
             />
-            <Image
-              source={icons.business}
-              resizeMode="contain"
-              style={{
-                width: 20,
-                height: 40,
-                alignSelf: 'center',
-                tintColor: COLORS.primary,
-              }}
-            />
           </View>
         </View>
 
@@ -581,6 +508,7 @@ const RegisterClients = ({navigation, route}) => {
           }}>
           <View
             style={{
+              ...styles.fieldSet,
               height: 40,
               width: '45%',
 
@@ -592,9 +520,8 @@ const RegisterClients = ({navigation, route}) => {
               alignSelf: 'center',
               borderRadius: 10,
             }}>
+            <Text style={styles.legend}>County</Text>
             <TextInput
-              placeholderTextColor={COLORS.primary}
-              placeholder="County"
               value={County}
               onChangeText={text => setCounty(text)}
               style={{
@@ -604,19 +531,10 @@ const RegisterClients = ({navigation, route}) => {
                 color: COLORS.primary,
               }}
             />
-            <Image
-              source={icons.user}
-              resizeMode="contain"
-              style={{
-                width: 20,
-                height: 40,
-                alignSelf: 'center',
-                tintColor: COLORS.primary,
-              }}
-            />
           </View>
           <View
             style={{
+              ...styles.fieldSet,
               height: 40,
               width: '45%',
 
@@ -628,9 +546,8 @@ const RegisterClients = ({navigation, route}) => {
               alignSelf: 'center',
               borderRadius: 10,
             }}>
+            <Text style={styles.legend}>Sub County</Text>
             <TextInput
-              placeholderTextColor={COLORS.primary}
-              placeholder="Sub county"
               value={SubCounty}
               onChangeText={text => setSubCounty(text)}
               style={{
@@ -640,16 +557,6 @@ const RegisterClients = ({navigation, route}) => {
                 color: COLORS.primary,
               }}
             />
-            <Image
-              source={icons.user}
-              resizeMode="contain"
-              style={{
-                width: 20,
-                height: 40,
-                alignSelf: 'center',
-                tintColor: COLORS.primary,
-              }}
-            />
           </View>
         </View>
 
@@ -662,6 +569,7 @@ const RegisterClients = ({navigation, route}) => {
           }}>
           <View
             style={{
+              ...styles.fieldSet,
               height: 40,
               width: '45%',
 
@@ -673,9 +581,8 @@ const RegisterClients = ({navigation, route}) => {
               alignSelf: 'center',
               borderRadius: 10,
             }}>
+            <Text style={styles.legend}>District</Text>
             <TextInput
-              placeholderTextColor={COLORS.primary}
-              placeholder="District"
               value={District}
               onChangeText={text => setDistrict(text)}
               style={{
@@ -685,19 +592,10 @@ const RegisterClients = ({navigation, route}) => {
                 color: COLORS.primary,
               }}
             />
-            <Image
-              source={icons.user}
-              resizeMode="contain"
-              style={{
-                width: 20,
-                height: 40,
-                alignSelf: 'center',
-                tintColor: COLORS.primary,
-              }}
-            />
           </View>
           <View
             style={{
+              ...styles.fieldSet,
               height: 40,
               width: '45%',
 
@@ -709,9 +607,9 @@ const RegisterClients = ({navigation, route}) => {
               alignSelf: 'center',
               borderRadius: 10,
             }}>
+            <Text style={styles.legend}>Division</Text>
             <TextInput
-              placeholderTextColor={COLORS.primary}
-              placeholder="Division"
+              
               value={Division}
               onChangeText={text => setDivision(text)}
               style={{
@@ -721,16 +619,7 @@ const RegisterClients = ({navigation, route}) => {
                 color: COLORS.primary,
               }}
             />
-            <Image
-              source={icons.user}
-              resizeMode="contain"
-              style={{
-                width: 20,
-                height: 40,
-                alignSelf: 'center',
-                tintColor: COLORS.primary,
-              }}
-            />
+           
           </View>
         </View>
         {/* address  */}
@@ -742,6 +631,7 @@ const RegisterClients = ({navigation, route}) => {
           }}>
           <View
             style={{
+              ...styles.fieldSet,
               height: 40,
               width: '45%',
 
@@ -753,9 +643,9 @@ const RegisterClients = ({navigation, route}) => {
               alignSelf: 'center',
               borderRadius: 10,
             }}>
+            <Text style={styles.legend}>Location</Text>
             <TextInput
-              placeholderTextColor={COLORS.primary}
-              placeholder="Location"
+              
               value={Location}
               onChangeText={text => setLocation(text)}
               style={{
@@ -765,19 +655,11 @@ const RegisterClients = ({navigation, route}) => {
                 color: COLORS.primary,
               }}
             />
-            <Image
-              source={icons.user}
-              resizeMode="contain"
-              style={{
-                width: 20,
-                height: 40,
-                alignSelf: 'center',
-                tintColor: COLORS.primary,
-              }}
-            />
+            
           </View>
           <View
             style={{
+              ...styles.fieldSet,
               height: 40,
               width: '45%',
 
@@ -789,9 +671,9 @@ const RegisterClients = ({navigation, route}) => {
               alignSelf: 'center',
               borderRadius: 10,
             }}>
+            <Text style={styles.legend}>Sub Location</Text>
             <TextInput
-              placeholderTextColor={COLORS.primary}
-              placeholder="Sub Location"
+              
               value={SubLocation}
               onChangeText={text => setSubLocation(text)}
               style={{
@@ -801,16 +683,7 @@ const RegisterClients = ({navigation, route}) => {
                 color: COLORS.primary,
               }}
             />
-            <Image
-              source={icons.user}
-              resizeMode="contain"
-              style={{
-                width: 20,
-                height: 40,
-                alignSelf: 'center',
-                tintColor: COLORS.primary,
-              }}
-            />
+        
           </View>
         </View>
         {/* address  */}
@@ -822,6 +695,7 @@ const RegisterClients = ({navigation, route}) => {
           }}>
           <View
             style={{
+              ...styles.fieldSet,
               height: 40,
               width: '45%',
 
@@ -833,9 +707,9 @@ const RegisterClients = ({navigation, route}) => {
               alignSelf: 'center',
               borderRadius: 10,
             }}>
+            <Text style={styles.legend}>Phase/Section</Text>
             <TextInput
-              placeholderTextColor={COLORS.primary}
-              placeholder="Phase/Section"
+              
               value={PhaseSection}
               onChangeText={text => setPhaseSection(text)}
               style={{
@@ -845,19 +719,11 @@ const RegisterClients = ({navigation, route}) => {
                 color: COLORS.primary,
               }}
             />
-            <Image
-              source={icons.user}
-              resizeMode="contain"
-              style={{
-                width: 20,
-                height: 40,
-                alignSelf: 'center',
-                tintColor: COLORS.primary,
-              }}
-            />
+           
           </View>
           <View
             style={{
+              ...styles.fieldSet,
               height: 40,
               width: '45%',
 
@@ -869,9 +735,9 @@ const RegisterClients = ({navigation, route}) => {
               alignSelf: 'center',
               borderRadius: 10,
             }}>
+            <Text style={styles.legend}>Estate</Text>
             <TextInput
-              placeholderTextColor={COLORS.primary}
-              placeholder="Estate"
+              
               value={Estate}
               onChangeText={text => setEstate(text)}
               style={{
@@ -881,16 +747,7 @@ const RegisterClients = ({navigation, route}) => {
                 color: COLORS.primary,
               }}
             />
-            <Image
-              source={icons.user}
-              resizeMode="contain"
-              style={{
-                width: 20,
-                height: 40,
-                alignSelf: 'center',
-                tintColor: COLORS.primary,
-              }}
-            />
+           
           </View>
         </View>
         <Text style={{...FONTS.h4, textAlign: 'center', color: COLORS.primary}}>
@@ -904,6 +761,7 @@ const RegisterClients = ({navigation, route}) => {
           }}>
           <View
             style={{
+              ...styles.fieldSet,
               height: 40,
               width: '45%',
 
@@ -915,9 +773,9 @@ const RegisterClients = ({navigation, route}) => {
               alignSelf: 'center',
               borderRadius: 10,
             }}>
+            <Text style={styles.legend}>First Name</Text>
             <TextInput
-              placeholderTextColor={COLORS.primary}
-              placeholder="First Name"
+              
               value={KFirstName}
               onChangeText={text => setKFirstName(text)}
               style={{
@@ -927,19 +785,11 @@ const RegisterClients = ({navigation, route}) => {
                 color: COLORS.primary,
               }}
             />
-            <Image
-              source={icons.user}
-              resizeMode="contain"
-              style={{
-                width: 20,
-                height: 40,
-                alignSelf: 'center',
-                tintColor: COLORS.primary,
-              }}
-            />
+            
           </View>
           <View
             style={{
+              ...styles.fieldSet,
               height: 40,
               width: '45%',
               padding: SIZES.padding,
@@ -950,9 +800,9 @@ const RegisterClients = ({navigation, route}) => {
               alignSelf: 'center',
               borderRadius: 10,
             }}>
+            <Text style={styles.legend}>Other Name</Text>
             <TextInput
-              placeholderTextColor={COLORS.primary}
-              placeholder="Others"
+             
               value={KOtherNames}
               onChangeText={text => setKOtherNames(text)}
               style={{
@@ -962,16 +812,7 @@ const RegisterClients = ({navigation, route}) => {
                 color: COLORS.primary,
               }}
             />
-            <Image
-              source={icons.user}
-              resizeMode="contain"
-              style={{
-                width: 20,
-                height: 40,
-                alignSelf: 'center',
-                tintColor: COLORS.primary,
-              }}
-            />
+            
           </View>
         </View>
         <View
@@ -982,6 +823,7 @@ const RegisterClients = ({navigation, route}) => {
           }}>
           <View
             style={{
+              ...styles.fieldSet,
               height: 40,
               width: '45%',
 
@@ -993,9 +835,9 @@ const RegisterClients = ({navigation, route}) => {
               alignSelf: 'center',
               borderRadius: 10,
             }}>
+            <Text style={styles.legend}>Relation</Text>
             <TextInput
-              placeholderTextColor={COLORS.primary}
-              placeholder="Relation"
+              
               value={KRelation}
               onChangeText={text => setKRelation(text)}
               style={{
@@ -1005,19 +847,11 @@ const RegisterClients = ({navigation, route}) => {
                 color: COLORS.primary,
               }}
             />
-            <Image
-              source={icons.user}
-              resizeMode="contain"
-              style={{
-                width: 20,
-                height: 40,
-                alignSelf: 'center',
-                tintColor: COLORS.primary,
-              }}
-            />
+          
           </View>
           <View
             style={{
+              ...styles.fieldSet,
               height: 40,
               width: '45%',
               padding: SIZES.padding,
@@ -1028,9 +862,9 @@ const RegisterClients = ({navigation, route}) => {
               alignSelf: 'center',
               borderRadius: 10,
             }}>
+            <Text style={styles.legend}>Address</Text>
             <TextInput
-              placeholderTextColor={COLORS.primary}
-              placeholder="Address"
+              
               value={kAddress}
               onChangeText={text => setkAddress(text)}
               style={{
@@ -1040,21 +874,13 @@ const RegisterClients = ({navigation, route}) => {
                 color: COLORS.primary,
               }}
             />
-            <Image
-              source={icons.user}
-              resizeMode="contain"
-              style={{
-                width: 20,
-                height: 40,
-                alignSelf: 'center',
-                tintColor: COLORS.primary,
-              }}
-            />
+            
           </View>
         </View>
         {/* Next of keen Phone Number */}
         <View
           style={{
+            ...styles.fieldSet,
             height: 40,
             width: '90%',
             padding: SIZES.padding,
@@ -1065,9 +891,9 @@ const RegisterClients = ({navigation, route}) => {
             alignSelf: 'center',
             borderRadius: 10,
           }}>
+          <Text style={styles.legend}>Phone Number</Text>
           <TextInput
-            placeholderTextColor={COLORS.primary}
-            placeholder="Cell phone"
+            
             value={kPhoneNumber}
             onChangeText={text => setkPhoneNumber(text)}
             style={{
@@ -1077,16 +903,7 @@ const RegisterClients = ({navigation, route}) => {
               color: COLORS.primary,
             }}
           />
-          <Image
-            source={icons.email}
-            resizeMode="contain"
-            style={{
-              width: 20,
-              height: 40,
-              alignSelf: 'center',
-              tintColor: COLORS.primary,
-            }}
-          />
+         
         </View>
 
         <Text style={{...FONTS.h4, textAlign: 'center', color: COLORS.primary}}>
@@ -1101,6 +918,7 @@ const RegisterClients = ({navigation, route}) => {
           }}>
           <View
             style={{
+              ...styles.fieldSet,
               height: 40,
               width: '45%',
               padding: SIZES.padding,
@@ -1111,9 +929,9 @@ const RegisterClients = ({navigation, route}) => {
               alignSelf: 'center',
               borderRadius: 10,
             }}>
+            <Text style={styles.legend}>Amount</Text>
             <TextInput
-              placeholderTextColor={COLORS.primary}
-              placeholder="Amount"
+              
               keyboardType="numeric"
               value={RegAmount}
               onChangeText={text => setRegAmount(text)}
@@ -1124,19 +942,11 @@ const RegisterClients = ({navigation, route}) => {
                 color: COLORS.primary,
               }}
             />
-            <Image
-              source={icons.email}
-              resizeMode="contain"
-              style={{
-                width: 20,
-                height: 40,
-                alignSelf: 'center',
-                tintColor: COLORS.primary,
-              }}
-            />
+           
           </View>
           <View
             style={{
+              ...styles.fieldSet,
               height: 40,
               width: '45%',
               padding: SIZES.padding,
@@ -1147,9 +957,9 @@ const RegisterClients = ({navigation, route}) => {
               alignSelf: 'center',
               borderRadius: 10,
             }}>
+            <Text style={styles.legend}>RecieptNo</Text>
             <TextInput
-              placeholderTextColor={COLORS.primary}
-              placeholder="Reciept Number"
+              
               keyboardType="numeric"
               value={RecieptNo}
               onChangeText={text => setRecieptNo(text)}
@@ -1160,16 +970,7 @@ const RegisterClients = ({navigation, route}) => {
                 color: COLORS.primary,
               }}
             />
-            <Image
-              source={icons.email}
-              resizeMode="contain"
-              style={{
-                width: 20,
-                height: 40,
-                alignSelf: 'center',
-                tintColor: COLORS.primary,
-              }}
-            />
+           
           </View>
         </View>
         <Text style={{...FONTS.h4, textAlign: 'center', color: COLORS.primary}}>
@@ -1178,6 +979,7 @@ const RegisterClients = ({navigation, route}) => {
         {/* Email */}
         <View
           style={{
+            ...styles.fieldSet,
             height: 40,
             width: '90%',
             padding: SIZES.padding,
@@ -1188,9 +990,9 @@ const RegisterClients = ({navigation, route}) => {
             alignSelf: 'center',
             borderRadius: 10,
           }}>
+          <Text style={styles.legend}>Email</Text>
           <TextInput
-            placeholderTextColor={COLORS.primary}
-            placeholder="Email"
+           
             value={Email}
             onChangeText={text => setEmail(text)}
             style={{
@@ -1222,6 +1024,7 @@ const RegisterClients = ({navigation, route}) => {
           {/* pin */}
           <View
             style={{
+              ...styles.fieldSet,
               height: 40,
               width: '45%',
               padding: SIZES.padding,
@@ -1232,9 +1035,9 @@ const RegisterClients = ({navigation, route}) => {
               alignSelf: 'center',
               borderRadius: 10,
             }}>
+            <Text style={styles.legend}>Pin</Text>
             <TextInput
-              placeholderTextColor={COLORS.primary}
-              placeholder="Pin"
+              
               keyboardType="number-pad"
               value={Pin}
               onChangeText={text => setPin(text)}
@@ -1259,6 +1062,7 @@ const RegisterClients = ({navigation, route}) => {
           {/* password */}
           <View
             style={{
+              ...styles.fieldSet,
               height: 40,
               width: '45%',
               padding: SIZES.padding,
@@ -1269,9 +1073,9 @@ const RegisterClients = ({navigation, route}) => {
               alignSelf: 'center',
               borderRadius: 10,
             }}>
+            <Text style={styles.legend}>Password</Text>
             <TextInput
-              placeholderTextColor={COLORS.primary}
-              placeholder="Password"
+              
               value={password}
               onChangeText={text => setpassword(text)}
               style={{
@@ -1296,6 +1100,7 @@ const RegisterClients = ({navigation, route}) => {
         {/* registered by */}
         <View
           style={{
+            ...styles.fieldSet,
             height: 40,
             width: '90%',
             padding: SIZES.padding,
@@ -1306,9 +1111,9 @@ const RegisterClients = ({navigation, route}) => {
             alignSelf: 'center',
             borderRadius: 10,
           }}>
+          <Text style={styles.legend}>Registered By</Text>
           <TextInput
-            placeholderTextColor={COLORS.primary}
-            placeholder="reistered by"
+            
             value={registeredBy}
             onChangeText={text => setregisteredBy(text)}
             style={{
@@ -1318,20 +1123,12 @@ const RegisterClients = ({navigation, route}) => {
               color: COLORS.primary,
             }}
           />
-          <Image
-            source={icons.email}
-            resizeMode="contain"
-            style={{
-              width: 20,
-              height: 40,
-              alignSelf: 'center',
-              tintColor: COLORS.primary,
-            }}
-          />
+          
         </View>
         {/* Email */}
         <View
           style={{
+            ...styles.fieldSet,
             height: 40,
             width: '90%',
             padding: SIZES.padding,
@@ -1342,9 +1139,9 @@ const RegisterClients = ({navigation, route}) => {
             alignSelf: 'center',
             borderRadius: 10,
           }}>
+          <Text style={styles.legend}>IntroducedBy</Text>
           <TextInput
-            placeholderTextColor={COLORS.primary}
-            placeholder="Introduced By"
+            
             value={IntroducedBy}
             onChangeText={text => setIntroducedBy(text)}
             style={{
@@ -1354,16 +1151,7 @@ const RegisterClients = ({navigation, route}) => {
               color: COLORS.primary,
             }}
           />
-          <Image
-            source={icons.email}
-            resizeMode="contain"
-            style={{
-              width: 20,
-              height: 40,
-              alignSelf: 'center',
-              tintColor: COLORS.primary,
-            }}
-          />
+          
         </View>
         {/* others */}
         <TouchableOpacity
@@ -1390,5 +1178,24 @@ export default RegisterClients;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fff',
+  },
+  fieldSet: {
+    margin: 10,
+    paddingHorizontal: 10,
+    paddingBottom: 10,
+    borderRadius: 5,
+    borderWidth: 1,
+    alignItems: 'center',
+    borderColor: '#000',
+  },
+  legend: {
+    position: 'absolute',
+    top: -12,
+    left: 10,
+    fontWeight: 'bold',
+    backgroundColor: '#fff',
+    color: COLORS.primary,
+    borderRadius:2,
   },
 });

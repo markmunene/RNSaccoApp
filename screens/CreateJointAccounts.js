@@ -20,7 +20,7 @@ const CreateJointAccounts = ({navigation}) => {
   const [SelectedUsers, setSelectedUsers] = React.useState([]);
   const [StateUserData, setStateUserData] = React.useState([]);
   const [groupName, setgroupName] = React.useState('');
-  const users = useSelector(state => state.users.shortUserDetails);
+  const users = useSelector(state => state.users.AllusersMinData);
   React.useEffect(() => {
     let mount = true;
     if (mount) {
@@ -141,7 +141,7 @@ const CreateJointAccounts = ({navigation}) => {
         </TouchableOpacity>
         <Text
           style={{
-            ...FONTS.h2,
+            ...FONTS.h3,
             marginRight: SIZES.padding,
             color: COLORS.primary,
           }}>
@@ -198,11 +198,11 @@ const CreateJointAccounts = ({navigation}) => {
               borderColor: COLORS.primary,
               borderWidth: 1,
             }}>
-            <FlatList
-              data={StateUserData}
-              keyExtractor={(item, index) => index.toString() + item.id}
-              renderItem={({item}) => <RenderUsers item={item} />}
-            />
+            <ScrollView showsHorizontalScrollIndicator={false}>
+            {StateUserData.map((item, index) => (
+              <RenderUsers item={item} key={index.toString() + item.id} />
+            ))}
+          </ScrollView>
           </View>
           <View>
             <Text
@@ -253,7 +253,7 @@ const CreateJointAccounts = ({navigation}) => {
                       width: 30,
                       height: 30,
                       alignSelf: 'center',
-                      tintColor: COLORS.primary,
+                      tintColor: 'red',
                     }}
                   />
                 </TouchableOpacity>

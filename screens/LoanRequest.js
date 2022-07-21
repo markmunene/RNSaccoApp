@@ -9,15 +9,17 @@ import {
 } from 'react-native';
 import React from 'react';
 import SendSMS from 'react-native-sms';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import moment from 'moment';
 
 // import RangeSlider from 'rn-range-slider';
 import Slider from '@react-native-community/slider';
 
-import {icons, images, COLORS, SIZES, FONTS} from '../constants';
+import { icons, images, COLORS, SIZES, FONTS } from '../constants';
+
 
 import firestore from '@react-native-firebase/firestore';
+import { createLoanRequest } from './Actions/LoanRequestAction';
 
 function RenderHeader({navigation}) {
   return (
@@ -48,7 +50,9 @@ function RenderHeader({navigation}) {
   );
 }
 
-const LoanRequest = ({navigation}) => {
+const LoanRequest = ({ navigation }) =>
+{
+  const dispatch = useDispatch();
   // const [RangeValue, setRangeValue] = React.useState(0);
   const [MinimumLoan, setMinimumLoan] = React.useState(0);
   const [MaximumLoan, setMaximumLoan] = React.useState(100000);
@@ -100,16 +104,13 @@ const LoanRequest = ({navigation}) => {
     const LoanDetails = {
       LoanAmount: RangeValue,
       user: user,
-      DueDate: DueDate,
-      date: new Date.now(),
+      dueDate: DueDate,
+      status: 'Pending',
+      date:  Date.now(),
     };
 
     if (RangeValue > 0) {
-      await firestore()
-        .collection('LoanRequests')
-        .add({
-          ...LoanDetails,
-        });
+     dispatch(createLoanRequest({LoanDetails}));
     }
   };
 

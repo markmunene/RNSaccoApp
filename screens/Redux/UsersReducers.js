@@ -3,6 +3,7 @@ const initialState = {
   isLoading: false,
   AuthUser: [],
   shortUserDetails: [],
+  AllusersMinData: [],
 };
 
 export default function UsersReducers(state = initialState, action) {
@@ -10,7 +11,7 @@ export default function UsersReducers(state = initialState, action) {
     case 'GET_ALL_USERS':
       let {AuthUser} = state;
 
-      // get filtered  user details
+      // get filtered  user details for the logged in user
       let userDetails = action.payload.filter(user => {
         if (user?.id == AuthUser[0]?.uid) {
           return user;
@@ -24,10 +25,21 @@ export default function UsersReducers(state = initialState, action) {
         Phone: userDetails[0].Phone,
       };
       userData.push(user);
+      // reducing the user details to short version
+      let shortUserDetails = action.payload.map(user =>
+      {
+        return {
+          id: user.id,
+          Name: user.Name + ' ' + user?.FirstName,
+          Phone: user.Phone,
+          IdNo: user.IdNo,
+        };
+      })
       return {
         ...state,
         Users: action.payload,
         shortUserDetails: userData,
+        AllusersMinData: shortUserDetails,
         isLoading: false,
       };
  
@@ -48,6 +60,7 @@ export default function UsersReducers(state = initialState, action) {
         ...state,
         Users: Object.assign([], newUser),
       };
+    
     case 'UPDATE_USER':
       let updateUser = state.Users;
       let userIndex = updateUser.findIndex(
