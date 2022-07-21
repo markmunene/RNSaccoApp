@@ -55,12 +55,14 @@ export const money3 = require('../assets/icons/money3.png');
 export const add2 = require('../assets/icons/add2.png');
 export const add3 = require('../assets/icons/add3.png');
 export const right = require('../assets/icons/right.png');
+export const dots = require('../assets/icons/3dots.png');
 
 export const minus = require('../assets/icons/minus-small.png');
 
 export const plus = require('../assets/icons/plus.png');
 
 export default {
+  dots,
   money,
   money3,
   add2,

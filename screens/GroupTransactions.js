@@ -146,7 +146,7 @@ function RenderTransactions({item}) {
               color: COLORS.primary,
               marginRight: 5,
             }}>
-            {item.Phone}
+            {item.amount}
           </Text>
         </View>
       </TouchableOpacity>
@@ -155,10 +155,11 @@ function RenderTransactions({item}) {
 }
 const GroupTransactions = ({navigation, route}) => {
   let {item, type} = route.params;
+
   const [data, setData] = React.useState([]);
   const [Istransactions, setIstransactions] = React.useState(false);
   React.useEffect(() => {
-    if (type === 'members') {
+    if (type == 'members') {
       setIstransactions(false);
     } else {
       setIstransactions(true);
@@ -174,7 +175,7 @@ const GroupTransactions = ({navigation, route}) => {
           height: '80%',
         }}>
         <FlatList
-          data={item.users}
+          data={item}
           renderItem={({item}) =>
             Istransactions ? (
               <RenderTransactions item={item} />
