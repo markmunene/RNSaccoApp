@@ -18,14 +18,19 @@ export const getLoanRequest = () => {
 };
 
 export const createLoanRequest = loanRequest => {
+  let temploan = [];
+
   return async dispatch => {
     await firestore()
       .collection('LoanRequests')
-      .add({...loanRequest.LoanDetails});
-    dispatch({
-      type: 'CREATE_LoanRequest',
-      payload: loanRequest.LoanDetails,
-    });
+      .add({...loanRequest.LoanDetails})
+      .then(doc => {
+        // temploan.push({...loanRequest.LoanDetails,id:doc.id});
+        dispatch({
+          type: 'CREATE_LoanRequest',
+          payload: {...loanRequest.LoanDetails, id: doc.id},
+        });
+      });
   };
 };
 export const updateLoanRequest = loanRequest => {
@@ -42,29 +47,34 @@ export const updateLoanRequest = loanRequest => {
 };
 export const getApprovedLoans = () => {
   return async dispatch => {
-    const ApprovedLoans = await firestore().collection('loans').get();
-    const ApprovedLoansArray = [];
-    let i = 0;
-    ApprovedLoans.forEach(doc => {
-      ApprovedLoansArray.push(doc.data());
-      ApprovedLoansArray[i]['id'] = doc.id;
-      i++;
-    });
-    dispatch({
-      type: 'GET_APPROVED_LOANS',
-      payload: ApprovedLoansArray,
-    });
+    // let ApprovedLoans = await firestore().collection('loans');
+    // ApprovedLoans = ApprovedLoans.limit(10);
+    // ApprovedLoans.onSnapshot(querySnapshot => {
+    //   const ApprovedLoansArray = [];
+    //   let i = 0;
+    //   querySnapshot.forEach(doc => {
+    //     ApprovedLoansArray.push(doc.data());
+    //     ApprovedLoansArray[i]['id'] = doc.id;
+    //     i++;
+    //   });
+    //   dispatch({
+    //     type: 'GET_APPROVED_LOANS',
+    //     payload: ApprovedLoansArray,
+    //   });
+    // });
   };
 };
 export const addApprovedLoan = loan => {
   return async dispatch => {
     await firestore()
       .collection('loans')
-      .add({...loan});
-    dispatch({
-      type: 'Add_Approved_Loan',
-      payload: loan,
-    });
+      .add({...loan})
+      .then(doc => {
+        dispatch({
+          type: 'Add_Approved_Loan',
+          payload: {...loan, id: doc.id},
+        });
+      });
   };
 };
 export const getLoanPayment = () => {
@@ -87,15 +97,17 @@ export const addLoanPayment = (loanPayment, loanData) => {
   return async dispatch => {
     // add loan payment to loan collection
 
+    // await firestore()
+    //   .collection('loanPayment')
+    //   .add({...loanPayment});
 
-    await firestore()
-      .collection('loanPayment')
-      .add({ ...loanPayment });
-
-    // update Loan Balance
-    await firestore().collection('loans').doc(loanData.id).update({
-      ...loanData,
-    });
+    // // update Loan Balance
+    // await firestore()
+    //   .collection('loans')
+    //   .doc(loanData.id)
+    //   .update({
+    //     ...loanData,
+    //   });
     // dispatch redux actions
     dispatch({
       type: 'ADD_LoanPayment',
@@ -104,7 +116,23 @@ export const addLoanPayment = (loanPayment, loanData) => {
     dispatch({
       type: 'UPDATE_APPROVED_LOAN',
       payload: loanData,
-
-    })
+    });
+  };
+};
+export const DeleteLoanRequest = loanRequest => {
+  return async dispatch => {
+    await firestore()
+      .collection('LoanRequests')
+      .doc(loanRequest.id)
+      .delete()
+      .then(() => {
+        dispatch({
+          type: 'DELETE_LoanRequest',
+          payload: loanRequest,
+        });
+      })
+      .catch(error => {
+        console.log(error);
+      });
   };
 };

@@ -231,7 +231,6 @@ const LoanPreCondtions = ({navigation, route}) => {
           }}>
           <Text style={styles.legend}>Loan Range to</Text>
           <TextInput
-            
             keyboardType="numeric"
             value={RangeTo}
             onChangeText={text => setRangeTo(text)}
@@ -268,7 +267,6 @@ const LoanPreCondtions = ({navigation, route}) => {
           }}>
           <Text style={styles.legend}>InterestRate</Text>
           <TextInput
-           
             keyboardType="numeric"
             value={InterestRate}
             onChangeText={text => setInterestRate(text)}
@@ -303,9 +301,8 @@ const LoanPreCondtions = ({navigation, route}) => {
             alignSelf: 'center',
             borderRadius: 10,
           }}>
-          <Text style={styles.legend}>Duration</Text>
+          <Text style={styles.legend}>Duration(months)</Text>
           <TextInput
-            
             value={Duration}
             keyboardType="numeric"
             onChangeText={text => setDuration(text)}
@@ -342,7 +339,6 @@ const LoanPreCondtions = ({navigation, route}) => {
           }}>
           <Text style={styles.legend}>Fine</Text>
           <TextInput
-           
             keyboardType="numeric"
             value={Fine}
             onChangeText={text => setFine(text)}

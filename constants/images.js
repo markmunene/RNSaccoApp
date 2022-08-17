@@ -5,6 +5,7 @@ const avatar_4 = require('../assets/images/avatar-4.jpg');
 const avatar_5 = require('../assets/images/avatar-5.jpg');
 const group4 = require('../assets/images/group4.jpg');
 const rich4 = require('../assets/images/rich4.jpg');
+const logo = require('../assets/images/logo.jpg');
 
 const hands = require('../assets/images/hands.jpg');
 
@@ -13,7 +14,7 @@ const rich3 = require('../assets/images/rich3.jpg');
 export default {
   group4,
   rich4,
-
+  logo,
   hands,
   rich3,
 

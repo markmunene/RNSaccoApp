@@ -13,13 +13,15 @@ import React from 'react';
 import {icons, images, COLORS, SIZES, FONTS} from '../constants';
 import firestore from '@react-native-firebase/firestore';
 // import UserData from './UsersData';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
+import {ADD_NEW_Joints} from './Actions/Accounts';
 
 const CreateJointAccounts = ({navigation}) => {
   const [SearchText, setSearchText] = React.useState('');
   const [SelectedUsers, setSelectedUsers] = React.useState([]);
   const [StateUserData, setStateUserData] = React.useState([]);
   const [groupName, setgroupName] = React.useState('');
+  const dispatch = useDispatch();
   const users = useSelector(state => state.users.AllusersMinData);
   React.useEffect(() => {
     let mount = true;
@@ -50,6 +52,8 @@ const CreateJointAccounts = ({navigation}) => {
       })
       .then(() => {
         navigation.navigate('JointAccounts');
+        alert('Group Created Successfully');
+        dispatch(ADD_NEW_Joints({...groupData}));
       })
       .catch(err => {});
   };
@@ -199,10 +203,10 @@ const CreateJointAccounts = ({navigation}) => {
               borderWidth: 1,
             }}>
             <ScrollView showsHorizontalScrollIndicator={false}>
-            {StateUserData.map((item, index) => (
-              <RenderUsers item={item} key={index.toString() + item.id} />
-            ))}
-          </ScrollView>
+              {StateUserData.map((item, index) => (
+                <RenderUsers item={item} key={index.toString() + item.id} />
+              ))}
+            </ScrollView>
           </View>
           <View>
             <Text

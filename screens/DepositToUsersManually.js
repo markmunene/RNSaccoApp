@@ -12,22 +12,21 @@ import {
 import React from 'react';
 
 import firestore from '@react-native-firebase/firestore';
+import {StoreDeposit} from './Actions/DepositAction';
 
 import {icons, images, COLORS, SIZES, FONTS} from '../constants';
-
-import {Add_newAccount} from './Actions/Accounts';
 import UserData from './UsersData';
 
 import {useSelector, useDispatch} from 'react-redux';
 
-const CreateGroupAccount = ({navigation}) => {
+const DepositToUsersManually = ({navigation}) => {
+  const dispatch = useDispatch();
   const [SearchText, setSearchText] = React.useState('');
   const [SelectedUsers, setSelectedUsers] = React.useState([]);
   const [StateUserData, setStateUserData] = React.useState([]);
-  const [groupName, setgroupName] = React.useState('');
+  const [DepositAmount, setDepositAmount] = React.useState(0);
   const users = useSelector(state => state.users.AllusersMinData);
-
-  const dispatch = useDispatch();
+  let options = useSelector(state => state.users.userDataforModal);
 
   React.useEffect(() => {
     let mount = true;
@@ -42,27 +41,21 @@ const CreateGroupAccount = ({navigation}) => {
 
   // function to save users in a group
   const HandleSubmit = async () => {
-    // save the group name
-    // save the users in the group
-    // navigate to the group screen
-    const groupData = {
-      groupName: groupName,
-      users: SelectedUsers,
+    const data = {
+      amount: DepositAmount,
+      userId: SelectedUsers[0].id,
+      accountType: 'individual',
+      Phone: SelectedUsers[0].Phone,
+      Name: SelectedUsers[0].Name,
       date: Date.now(),
+      depositMethod: 'mobile',
+      status: 'received',
     };
-    await firestore()
-      .collection('groups')
-      .add({
-        ...groupData,
-      })
-      .then(() => {
-        dispatch(Add_newAccount({...groupData}));
 
-        alert('Group Created Successfully');
-      })
-      .catch(error => {
-        console.log(error);
-      });
+    dispatch(StoreDeposit({data}));
+    navigation.goBack();
+    // alert(data);
+    alert('Deposit Successful');
   };
 
   const onSearch = text => {
@@ -87,13 +80,11 @@ const CreateGroupAccount = ({navigation}) => {
   const HandleUserSelection = ({item}) => {
     let newArray = [];
     if (SelectedUsers.length < 10) {
-      if (SelectedUsers.length == 0) {
+      if (SelectedUsers.length <= 1) {
         newArray.push(item);
 
         return setSelectedUsers(newArray);
       }
-
-      setSelectedUsers([...SelectedUsers, item]);
     }
   };
 
@@ -148,7 +139,7 @@ const CreateGroupAccount = ({navigation}) => {
             marginRight: SIZES.padding,
             color: COLORS.primary,
           }}>
-          Create Group Account
+          Deposit to Users Manually
         </Text>
       </View>
       <ScrollView
@@ -290,9 +281,9 @@ const CreateGroupAccount = ({navigation}) => {
             }}>
             <TextInput
               placeholderTextColor={COLORS.primary}
-              placeholder="Group Account Name"
-              value={groupName}
-              onChangeText={text => setgroupName(text)}
+              placeholder="Amount"
+              value={DepositAmount}
+              onChangeText={text => setDepositAmount(text)}
               style={{
                 width: '90%',
                 height: 40,
@@ -331,7 +322,7 @@ const CreateGroupAccount = ({navigation}) => {
   );
 };
 
-export default React.memo(CreateGroupAccount);
+export default React.memo(DepositToUsersManually);
 
 const styles = StyleSheet.create({
   container: {

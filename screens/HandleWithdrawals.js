@@ -15,10 +15,13 @@ import firestore from '@react-native-firebase/firestore';
 import {useSelector, useDispatch} from 'react-redux';
 import {icons, images, COLORS, SIZES, FONTS} from '../constants';
 import ModalFilterPicker from 'react-native-modal-filter-picker';
-
+import {UpDate_WithdrawRequest} from './Actions/WithdrawAction';
 import {addLoanPayment} from './Actions/LoanRequestAction';
-import moment from 'moment';
-import axios from 'axios';
+
+import {
+  HandleWithdrawal,
+  Delete_WithdrawRequest,
+} from './Actions/DepositAction';
 
 function RenderHeader({navigation}) {
   return (
@@ -46,7 +49,7 @@ function RenderHeader({navigation}) {
       </TouchableOpacity>
       <View style={{justifyContent: 'center', alignItems: 'center'}}>
         <Text style={{...FONTS.h3, color: COLORS.primary, alignSelf: 'center'}}>
-          Loan Payment
+          Withdrawal
         </Text>
       </View>
     </View>
@@ -54,60 +57,68 @@ function RenderHeader({navigation}) {
 }
 // render a title
 
-const LoanPayment = ({navigation, route}) => {
+const HandleWithDrawals = ({navigation, route}) => {
   const dispatch = useDispatch();
-  const loanData = route.params;
+  const withdrawalData = route.params;
   const [RangeValue, setRangeValue] = React.useState(0);
-  const [MinimumLoan, setMinimumLoan] = React.useState(0);
-  const [MaximumLoan, setMaximumLoan] = React.useState(100);
-  const [selectedValue, setSelectedValue] = React.useState(0);
-  const DepositData = ['individual', 'jambo account', 'Joint', 'group'];
-  // const user = useSelector(state => state.users.shortUserDetails);
 
-  // const [ModalVisible, setModalVisible] = React.useState(false);
-  // const [SelectedUserId, setSelectedUserId] = React.useState('');
-  // let user = useSelector(state => state.users.AllusersMinData);
-  // let options = useSelector(state => state.users.userDataforModal);
-  // const onSearch = text => {
-  //   // console.log(text, 'texttttttttttttttttttttttttttttttt');
-  //   setSelectedUserId(text);
-  //   setModalVisible(false);
-  // };
+  const [selectedValue, setSelectedValue] = React.useState(0);
+  //   const DepositData = ['individual', 'jambo account', 'Joint', 'group'];
+
+  const AccountBalance = useSelector(state => state.deposit.depositBalance);
+  const [AccountBalanceData1, setAccountBalanceData1] = React.useState([]);
+  React.useEffect(() => {
+    // let AccountBalanceData = [];
+
+    if (withdrawalData.item?.groupId != 'null') {
+      // console.log('groupId', withdrawalData.item?.groupId);
+      let tempwithdrawalId =
+        withdrawalData.item.groupId + withdrawalData.item.AccountType;
+      let tempAccountBalance = AccountBalance.filter(item => {
+        if (item.id == tempwithdrawalId) {
+          return item;
+        }
+      });
+      setRangeValue(withdrawalData?.item?.amount);
+      // console.log(tempAccountBalance[0]?.balance, 'tempAccountBalance');
+      setAccountBalanceData1(tempAccountBalance);
+    } else {
+      let tempAccountBalance = AccountBalance.filter(item => {
+        if (
+          item.AccountType == withdrawalData.item.AccountType &&
+          item.userId == withdrawalData.item.userId
+        ) {
+          return item;
+        }
+      });
+      setRangeValue(withdrawalData?.item?.amount);
+      // console.log(tempAccountBalance[0]?.balance, 'tempAccountBalance');
+      setAccountBalanceData1(tempAccountBalance);
+    }
+  }, [withdrawalData?.item?.amount]);
 
   const HandleLoanPayment = async () => {
-    // let filteredUser = user.filter(item => item.id === SelectedUserId.key);
-    // loanData.item.phone_number,
-    const data = {
-      collection: 'loanPayment',
-      userId: loanData.item.user_id,
-      LoanId: loanData.item.id,
-      payment: 'mobile',
-      PhoneNumber: filteredUser[0].PhoneNumber,
+    // let withdrawData = {
+    //   ...withdrawalData.item,
+    //   status: 'approved',
+    // };
+    // console.log(withdrawData, 'AccountBalanceData1');
+    dispatch(Delete_WithdrawRequest({id: withdrawalData.item.id}));
 
-      userName: loanData.item.Name,
-      amount: RangeValue,
-      date: Date.now(),
-    };
-    let loanToBeUpdated = {
-      ...loanData.item,
-      date: moment(Date.now()).format('MMMM Do YYYY'),
-      collection: 'loanPayment',
-      PhoneNumber: '748406477',
-      amount: RangeValue,
-      Balance: Number(loanData.item.Balance) - Number(RangeValue),
-    };
+    dispatch(
+      HandleWithdrawal({
+        balance: Number(AccountBalanceData1[0].balance) - Number(RangeValue),
+        userId: withdrawalData.item.userId,
+        AccountType: withdrawalData.item.AccountType,
+        groupId:
+          withdrawalData.item?.groupId == 'null'
+            ? 'null'
+            : withdrawalData.item.groupId,
+        Date: Date.now(),
+      }),
+    );
 
-    axios
-      .post(
-        'https://us-central1-saccomgapp.cloudfunctions.net/main/lipaNaMpesaOnline',
-        {...loanToBeUpdated},
-      )
-      .then(res => {
-        dispatch(addLoanPayment(data, loanToBeUpdated));
-
-        navigation.navigate('LoansLandingScreen') &&
-          alert('Loan Payment Successful');
-      });
+    navigation.goBack() && alert('WithDrawal Successful');
   };
   return (
     <SafeAreaView style={styles.container}>
@@ -182,21 +193,38 @@ const LoanPayment = ({navigation, route}) => {
                 }}
               />
             </View>
-            <View
+            <Text
               style={{
-                width: '90%',
+                width: '80%',
                 height: 40,
-                justifyContent: 'space-between',
-                flexDirection: 'row',
-                marginLeft: SIZES.padding2,
+                ...FONTS.h4,
+                marginTop: 10,
+                color: COLORS.primary,
+                textAlign: 'center',
               }}>
-              <Text style={{...FONTS.h3, color: COLORS.primary}}>
-                Kes {MinimumLoan}
-              </Text>
-              <Text style={{...FONTS.h3, color: COLORS.primary}}>
-                Kes {MaximumLoan}
-              </Text>
-            </View>
+              Balance:: {AccountBalanceData1[0]?.balance}
+            </Text>
+            <Text
+              style={{
+                width: '80%',
+                height: 40,
+                ...FONTS.h4,
+                color: COLORS.primary,
+                textAlign: 'center',
+              }}>
+              {withdrawalData?.item?.userName}
+            </Text>
+            <Text
+              style={{
+                width: '80%',
+                height: 40,
+                ...FONTS.h4,
+                marginTop: 10,
+                color: COLORS.primary,
+                textAlign: 'center',
+              }}>
+              {withdrawalData?.item?.AccountType}
+            </Text>
           </View>
 
           <TouchableOpacity
@@ -212,7 +240,7 @@ const LoanPayment = ({navigation, route}) => {
               alignSelf: 'center',
               elevation: 3,
             }}>
-            <Text style={{...FONTS.h3, color: COLORS.white}}> Pay Loan</Text>
+            <Text style={{...FONTS.h3, color: COLORS.white}}> Withdraw</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -220,7 +248,7 @@ const LoanPayment = ({navigation, route}) => {
   );
 };
 
-export default React.memo(LoanPayment);
+export default React.memo(HandleWithDrawals);
 
 const styles = StyleSheet.create({
   container: {

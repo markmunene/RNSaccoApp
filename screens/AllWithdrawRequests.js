@@ -7,6 +7,7 @@ import {
   Image,
   TouchableOpacity,
   FlatList,
+  Alert,
 } from 'react-native';
 import {icons, images, COLORS, SIZES, FONTS} from '../constants';
 import UserData from './UsersData';
@@ -14,9 +15,12 @@ import UserData from './UsersData';
 import {useSelector} from 'react-redux/';
 import moment from 'moment';
 import {useDispatch} from 'react-redux';
+import firestore from '@react-native-firebase/firestore';
+
 import React from 'react';
 
 import {DeleteLoanPreConditions} from './Actions/loanPrecondtions';
+import {Delete_WithdrawRequest} from './Actions/WithdrawAction';
 function RenderTitle({navigation}) {
   return (
     <View
@@ -63,7 +67,32 @@ function RenderTitle({navigation}) {
 }
 
 const AllWithdrawRequests = ({navigation}) => {
+  const [isDelete, setIsDelete] = React.useState(false);
   const dispatch = useDispatch();
+  const HandleRequestDelete = async item => {
+    Alert.alert(
+      'delete action confirmation',
+      'Are  u sure you want to delete this request',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => setIsDelete(false),
+          style: 'cancel',
+        },
+        {
+          text: 'OK',
+          onPress: () => {
+            try {
+              dispatch(Delete_WithdrawRequest({id: item.id}));
+            } catch (error) {
+              console.log('fire ', error);
+            }
+          },
+        },
+      ],
+    );
+  };
+
   function RenderRequest({item, navigation}) {
     return (
       <View style={{width: '100%'}}>
@@ -76,7 +105,7 @@ const AllWithdrawRequests = ({navigation}) => {
           {moment(item?.date).fromNow()}
         </Text>
         <TouchableOpacity
-          onPress={() => navigation.navigate('LoanPreCondtions', {item})}
+          onPress={() => navigation.navigate('HandleWithdrawals', {item})}
           style={{
             width: '90%',
             height: 40,
@@ -91,20 +120,19 @@ const AllWithdrawRequests = ({navigation}) => {
             backgroundColor: COLORS.white,
             elevation: 3,
           }}>
-          <Text style={{...FONTS.h4, color: COLORS.primary}}>
+          <Text style={{...FONTS.body5, color: COLORS.primary}}>
             ({item.userName}- {item.AccountType})
           </Text>
           <View style={{flexDirection: 'row'}}>
             <Text
               style={{
-                ...FONTS.h4,
+                ...FONTS.body3,
                 color: COLORS.primary,
                 marginRight: 5,
               }}>
               {item.amount} Ksh
             </Text>
-            <TouchableOpacity
-              onPress={() => dispatch(DeleteLoanPreConditions({item}))}>
+            <TouchableOpacity onPress={() => HandleRequestDelete(item)}>
               <Image
                 source={icons.trash}
                 resizeMode="contain"

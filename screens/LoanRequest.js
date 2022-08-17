@@ -15,11 +15,11 @@ import moment from 'moment';
 // import RangeSlider from 'rn-range-slider';
 import Slider from '@react-native-community/slider';
 
-import { icons, images, COLORS, SIZES, FONTS } from '../constants';
-
+import {icons, images, COLORS, SIZES, FONTS} from '../constants';
 
 import firestore from '@react-native-firebase/firestore';
-import { createLoanRequest } from './Actions/LoanRequestAction';
+import {createLoanRequest} from './Actions/LoanRequestAction';
+import ModalFilterPicker from 'react-native-modal-filter-picker';
 
 function RenderHeader({navigation}) {
   return (
@@ -50,14 +50,13 @@ function RenderHeader({navigation}) {
   );
 }
 
-const LoanRequest = ({ navigation }) =>
-{
+const LoanRequest = ({navigation}) => {
   const dispatch = useDispatch();
   // const [RangeValue, setRangeValue] = React.useState(0);
   const [MinimumLoan, setMinimumLoan] = React.useState(0);
   const [MaximumLoan, setMaximumLoan] = React.useState(100000);
   const [RangeValue, setRangeValue] = React.useState(0);
-  const user = useSelector(state => state.users.shortUserDetails);
+  // const user = useSelector(state => state.users.shortUserDetails);
 
   const loanconditions = useSelector(state => state.policies.loanCondtions);
 
@@ -103,15 +102,34 @@ const LoanRequest = ({ navigation }) =>
 
     const LoanDetails = {
       LoanAmount: RangeValue,
-      user: user,
+      user: userSelect,
       dueDate: DueDate,
       status: 'Pending',
-      date:  Date.now(),
+      date: Date.now(),
     };
 
     if (RangeValue > 0) {
-     dispatch(createLoanRequest({LoanDetails}));
+      dispatch(createLoanRequest({LoanDetails})) && navigation.goBack();
+      // console.log(userSelect);
+      alert('Loan Request Submitted Successfully');
     }
+  };
+  const [ModalVisible, setModalVisible] = React.useState(false);
+  const [userSelect, setUserSelect] = React.useState([]);
+  const [SelectedUserId, setSelectedUserId] = React.useState('');
+  let user = useSelector(state => state.users.AllusersMinData);
+  let options = useSelector(state => state.users.userDataforModal);
+  const onSearch = text => {
+    // console.log(text, 'texttttttttttttttttttttttttttttttt');
+    setSelectedUserId(text);
+    let tempUser = user.filter(item => {
+      if (item.id === text.key) {
+        return item;
+      }
+    });
+
+    setUserSelect(tempUser);
+    setModalVisible(false);
   };
 
   return (
@@ -220,6 +238,41 @@ const LoanRequest = ({ navigation }) =>
                 }}>
                 Payment Date
               </Text>
+              <ModalFilterPicker
+                visible={ModalVisible}
+                onSelect={value => onSearch(value)}
+                onCancel={() => setModalVisible(false)}
+                options={options}
+              />
+
+              <TouchableOpacity
+                onPress={() => setModalVisible(!ModalVisible)}
+                style={{
+                  width: 80,
+                  height: 40,
+                  marginTop: 10,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderRadius: 10,
+                  backgroundColor: COLORS.darkgray,
+                }}>
+                <Text
+                  style={{
+                    ...FONTS.body4,
+                    color: COLORS.black,
+                    textAlign: 'center',
+                  }}>
+                  select User
+                </Text>
+              </TouchableOpacity>
+              <Text
+                style={{
+                  ...FONTS.h4,
+                  color: COLORS.primary,
+                  marginTop: SIZES.padding / 0.7,
+                }}>
+                {SelectedUserId.label}
+              </Text>
               <View
                 style={{
                   justifyContent: 'center',
@@ -227,7 +280,6 @@ const LoanRequest = ({ navigation }) =>
                   width: '100%',
                   height: '50%',
                   flexDirection: 'row',
-                  marginTop: SIZES.padding2 * 1.5,
                 }}>
                 <Text
                   style={{

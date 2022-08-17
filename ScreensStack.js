@@ -18,12 +18,14 @@ import DepositAccount from './screens/DepositAccount';
 import CreateGroupAccount from './screens/CreateGroupAccount';
 import CreateJointAccounts from './screens/CreateJointAccounts';
 import AllGroups from './screens/AllGroups';
+import JamboSavings from './screens/JamboSavings';
 
 import LoansLandingScreen from './screens/LoansLandingScreen';
 import GroupsJointsClientSide from './screens/GroupsjointsClientSide';
 import GroupTransactions from './screens/GroupTransactions';
 import LoanPayment from './screens/LoanPayment';
 import AdminRoute from './screens/AdminRoute';
+import DepositToUsersManually from './screens/DepositToUsersManually';
 import Allusers from './screens/Allusers';
 import LoanRequestDetails from './screens/LoanRequestDetails';
 import AllWithdrawRequests from './screens/AllWithdrawRequests';
@@ -35,21 +37,23 @@ const Stack = createNativeStackNavigator();
 import {useDispatch, useSelector} from 'react-redux';
 import {getAllpreconditions} from './screens/Actions/loanPrecondtions';
 import {getJoints, getGroups} from './screens/Actions/Accounts';
-import { LoginAction } from './screens/Actions/LoginAction';
+import {LoginAction} from './screens/Actions/LoginAction';
+import InitailScreen from './screens/InitailScreen';
 import LoanPayementHistory from './screens/LoanPayementHistory';
 
+import HandleWithdrawals from './screens/HandleWithdrawals';
+
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 import {RegisteredUsers} from './screens/Actions/RegisteredUsers';
-import { getAllwithdrawRequests } from './screens/Actions/WithdrawAction';
-import { getAllDeposits } from './screens/Actions/DepositAction';
+import {getAllwithdrawRequests} from './screens/Actions/WithdrawAction';
+import {getAllDeposits} from './screens/Actions/DepositAction';
 import {
   getLoanRequest,
   getLoanPayment,
   getApprovedLoans,
 } from './screens/Actions/LoanRequestAction';
-
-
 
 const Screenstack = () => {
   const dispatch = useDispatch();
@@ -79,6 +83,46 @@ const Screenstack = () => {
       isMounted = false;
     };
   }, []);
+  React.useEffect(() => {
+    // listening  to state changes
+    let accounts = firestore().collection('Accounts');
+    // accounts = accounts.where('userId', '==', SelectedUserId.key);
+    accounts = accounts.limit(10);
+    accounts.onSnapshot(querySnapshot => {
+      const accountsArray = [];
+      let i = 0;
+      querySnapshot.forEach(doc => {
+        accountsArray.push(doc.data());
+        accountsArray[i]['id'] = doc.id;
+        i++;
+      });
+
+      // console.log(accountsArray, 'accountsArray');
+
+      dispatch({
+        type: 'UpdateDepositBalance',
+        payload: accountsArray,
+      });
+    });
+  }, []);
+  React.useEffect(() => {
+    let ApprovedLoans = firestore().collection('loans');
+    ApprovedLoans = ApprovedLoans.limit(10);
+    ApprovedLoans.onSnapshot(querySnapshot => {
+      const ApprovedLoansArray = [];
+      let i = 0;
+      querySnapshot.forEach(doc => {
+        ApprovedLoansArray.push(doc.data());
+        ApprovedLoansArray[i]['id'] = doc.id;
+        i++;
+      });
+
+      dispatch({
+        type: 'GET_APPROVED_LOANS',
+        payload: ApprovedLoansArray,
+      });
+    });
+  }, []);
   return (
     <NavigationContainer>
       <Stack.Navigator
@@ -87,15 +131,22 @@ const Screenstack = () => {
           headerShown: false,
           header: null,
         }}>
+        <Stack.Screen
+          name="DepositToUsersManually"
+          component={DepositToUsersManually}
+        />
+        <Stack.Screen name="InitailScreen" component={InitailScreen} />
         <Stack.Screen name="home" component={BottomNavigation} />
         <Stack.Screen name="login" component={Login} />
         <Stack.Screen name="GroupTransactions" component={GroupTransactions} />
         <Stack.Screen name="LoanPayment" component={LoanPayment} />
+        <Stack.Screen name="HandleWithdrawals" component={HandleWithdrawals} />
+
         <Stack.Screen
           name="AllWithdrawRequests"
           component={AllWithdrawRequests}
         />
-        
+        <Stack.Screen name="JamboSavings" component={JamboSavings} />
         <Stack.Screen
           name="LoanPayementHistory"
           component={LoanPayementHistory}

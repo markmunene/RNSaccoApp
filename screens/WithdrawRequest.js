@@ -17,6 +17,7 @@ import Slider from '@react-native-community/slider';
 import {icons, images, COLORS, SIZES, FONTS} from '../constants';
 import {Picker} from '@react-native-picker/picker';
 import {useSelector, useDispatch} from 'react-redux';
+import ModalFilterPicker from 'react-native-modal-filter-picker';
 
 import {storeWithdrawRequest} from './Actions/WithdrawAction';
 
@@ -54,32 +55,48 @@ function RenderHeader({navigation}) {
   );
 }
 // render a title
-const WithdrawRequest = ({navigation}) => {
+const WithdrawRequest = ({navigation, route}) => {
   const [RangeValue, setRangeValue] = React.useState(0);
   const [MinimumLoan, setMinimumLoan] = React.useState(0);
   const [MaximumLoan, setMaximumLoan] = React.useState(100000);
   const [selectedValue, setSelectedValue] = React.useState(0);
 
-  const DepositData = ['individual', 'jambo account', 'Joint', 'group'];
+  const DepositData = ['individual', 'jamboAccount'];
+  let groupData = route.params;
 
-  const user = useSelector(state => state.users.shortUserDetails);
+  // const user = useSelector(state => state.users.shortUserDetails);
   const dispatch = useDispatch();
+  const [ModalVisible, setModalVisible] = React.useState(false);
+  const [SelectedUserId, setSelectedUserId] = React.useState('');
+  let user = useSelector(state => state.users.AllusersMinData);
+  let options = useSelector(state => state.users.userDataforModal);
+
+  const onSearch = text => {
+    setSelectedUserId(text);
+    setModalVisible(false);
+  };
 
   const handleWithRequest = async () => {
     // console.log(user);
+    let filteredUser = user.filter(item => item.id == SelectedUserId.key);
     let data = {
-      userId: user[0].id,
-      userName: user[0].Name,
-      phoneNumber: user[0].Phone,
+      userId: filteredUser[0].id,
+      userName: filteredUser[0].Name,
+      phoneNumber: filteredUser[0].PhoneNumber,
       amount: RangeValue,
-      AccountType: selectedValue,
+      AccountType:
+        groupData?.item?.groupName == undefined
+          ? selectedValue
+          : groupData.item.groupName,
       status: 'pending',
+      groupId: groupData?.item?.id == undefined ? 'null' : groupData.item.id,
 
       date: Date.now(),
     };
     dispatch(storeWithdrawRequest({data}));
 
     alert('Withdraw Request Successful');
+    navigation.goBack();
     setRangeValue(0);
     setSelectedValue('');
   };
@@ -174,6 +191,13 @@ const WithdrawRequest = ({navigation}) => {
               alignItems: 'center',
               marginTop: SIZES.padding2,
             }}>
+            <ModalFilterPicker
+              visible={ModalVisible}
+              onSelect={value => onSearch(value)}
+              onCancel={() => setModalVisible(false)}
+              options={options}
+            />
+
             <View
               style={{
                 borderRadius: 20,
@@ -191,6 +215,35 @@ const WithdrawRequest = ({navigation}) => {
                 }}>
                 Select Account
               </Text>
+              <Text
+                style={{
+                  ...FONTS.h4,
+                  color: COLORS.primary,
+                  marginTop: SIZES.padding / 0.7,
+                }}>
+                {SelectedUserId.label}
+              </Text>
+              <TouchableOpacity
+                onPress={() => setModalVisible(!ModalVisible)}
+                style={{
+                  width: 80,
+                  height: 40,
+                  marginTop: 10,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderRadius: 10,
+                  backgroundColor: COLORS.darkgray,
+                }}>
+                <Text
+                  style={{
+                    ...FONTS.body4,
+                    color: COLORS.black,
+                    textAlign: 'center',
+                  }}>
+                  select User
+                </Text>
+              </TouchableOpacity>
+
               <View
                 style={{
                   justifyContent: 'center',
@@ -198,21 +251,28 @@ const WithdrawRequest = ({navigation}) => {
                   width: '100%',
                   height: '50%',
                   flexDirection: 'row',
-                  marginTop: SIZES.padding2 * 1.5,
                 }}>
-                <Picker
-                  selectedValue={selectedValue}
-                  style={{height: 50, width: '80%', fontSize: 18}}
-                  onValueChange={(itemValue, itemIndex) => {
-                    setSelectedValue(itemValue);
-                  }}>
-                  <Picker.Item label="Select Account" value="all" />
-                  {DepositData?.map((category, i) => {
-                    return (
-                      <Picker.Item key={i} label={category} value={category} />
-                    );
-                  })}
-                </Picker>
+                {groupData?.item?.groupName == undefined ? (
+                  <Picker
+                    selectedValue={selectedValue}
+                    style={{height: 50, width: '80%', fontSize: 18}}
+                    onValueChange={(itemValue, itemIndex) => {
+                      setSelectedValue(itemValue);
+                    }}>
+                    <Picker.Item label="Select Account" value="all" />
+                    {DepositData?.map((category, i) => {
+                      return (
+                        <Picker.Item
+                          key={i}
+                          label={category}
+                          value={category}
+                        />
+                      );
+                    })}
+                  </Picker>
+                ) : (
+                  <Text>{groupData?.item?.groupName}</Text>
+                )}
               </View>
             </View>
           </View>

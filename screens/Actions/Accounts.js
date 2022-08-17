@@ -22,6 +22,30 @@ export const getGroups = () => {
     });
   };
 };
+
+export const Add_newAccount = data => {
+  return async dispatch => {
+    dispatch({
+      type: 'ADD_NEW_GROUP',
+      payload: data,
+    });
+  };
+};
+export const ADD_NEW_Joints = data => {
+  return async dispatch => {
+    dispatch({
+      type: 'ADD_NEW_Joints',
+      payload: data,
+    });
+  };
+};
+// export const Delete_Joints = data =>
+// {
+//   return async dispatch =>
+//   {
+//     firestore().
+//   }
+// }
 export const getJoints = () => {
   return async dispatch => {
     const joints = await firestore()

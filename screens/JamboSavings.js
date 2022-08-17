@@ -15,13 +15,11 @@ import ModalFilterPicker from 'react-native-modal-filter-picker';
 
 import moment from 'moment';
 
-const IndividualSavings = ({navigation}) => {
+const JamboSavings = ({navigation}) => {
   const [showStatement, setShowStatement] = React.useState(false);
   const deposit = useSelector(state => state.deposit.deposit);
+  // console.log(AccountBalance);
   const [DepositData, setDepositData] = React.useState([]);
-  const [ModalVisible, setModalVisible] = React.useState(false);
-  const [SelectedUserId, setSelectedUserId] = React.useState('');
-  // const [DepositDataForFilter, setDepositDataForFilter] = React.useState([]);
   const AccountBalance = useSelector(state => state.deposit.depositBalance);
   const [AccountBalanceData1, setAccountBalanceData1] = React.useState([]);
 
@@ -30,10 +28,14 @@ const IndividualSavings = ({navigation}) => {
     [],
   );
 
-  let user = useSelector(state => state.users.AllusersMinData);
+  const [ModalVisible, setModalVisible] = React.useState(false);
+  const [SelectedUserId, setSelectedUserId] = React.useState('');
+  // let user = useSelector(state => state.users.AllusersMinData);
   let options = useSelector(state => state.users.userDataforModal);
+
   const onSearch = text => {
     // console.log(text, 'texttttttttttttttttttttttttttttttt');
+
     setSelectedUserId(text);
     setModalVisible(false);
     let tempDepositData = DepositDataForFilter.filter(
@@ -44,7 +46,7 @@ const IndividualSavings = ({navigation}) => {
         return bal;
       }
     });
-    console.log(tempBalance, 'tempBalance');
+    // console.log(tempBalance, 'tempBalance');
     setfilteredAccountBalance(tempBalance);
     setDepositData(tempDepositData);
   };
@@ -55,14 +57,14 @@ const IndividualSavings = ({navigation}) => {
     let temp = [];
 
     deposit.filter(deposit => {
-      if (deposit.accountType == 'individual') {
+      if (deposit.accountType == 'jamboAccount') {
         // console.log(deposit);
         temp.push(deposit);
       }
     });
     let tempBalance = [];
     AccountBalance.filter(bal => {
-      if (bal.AccountType == 'individual') {
+      if (bal.AccountType == 'jamboAccount') {
         // console.log(deposit);
         tempBalance.push(bal);
       }
@@ -174,9 +176,7 @@ const IndividualSavings = ({navigation}) => {
           borderColor: COLORS.primary,
           borderWidth: 1,
         }}>
-        <Text style={{...FONTS.h2, color: COLORS.primary}}>
-          Savings Account
-        </Text>
+        <Text style={{...FONTS.h2, color: COLORS.primary}}>Jambo Account</Text>
         <Text style={{...FONTS.h2, color: COLORS.secondary}}>
           Ksh
           {/* .filter(item => item.userId === AuthUser[0].uid) */}
@@ -228,7 +228,7 @@ const IndividualSavings = ({navigation}) => {
   );
 };
 
-export default React.memo(IndividualSavings);
+export default React.memo(JamboSavings);
 
 const styles = StyleSheet.create({
   container: {

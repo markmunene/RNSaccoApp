@@ -8,7 +8,7 @@ export const getAllwithdrawRequests = () => {
       .get()
       .then(async snapshot => {
         const withdrawRequest = [];
-        const i = 0;
+        let i = 0;
         snapshot.forEach(async doc => {
           const data = doc.data();
           withdrawRequest.push(data);
@@ -27,7 +27,42 @@ export const storeWithdrawRequest = withdrawRequest => {
     //    from firebase firestore
     await firestore()
       .collection('withdrawRequest')
-      .add({ ...withdrawRequest.data });
-    dispatch({type: 'STORE_WITHDRAW_REQUEST', payload: withdrawRequest.data});
-  }
-}
+      .add({...withdrawRequest.data})
+      .then(async doc => {
+        dispatch({
+          type: 'STORE_WITHDRAW_REQUEST',
+          payload: {...withdrawRequest.data, id: doc.id},
+        });
+      });
+  };
+};
+
+export const UpDate_WithdrawRequest = withdrawRequest => {
+  return async dispatch => {
+    await firestore()
+      .collection('withdrawRequest')
+      .doc(withdrawRequest.withdrawData.id)
+      .update({...withdrawRequest.withdrawData});
+    dispatch({
+      type: 'UPDATE_WITHDRAW_REQUEST',
+      payload: withdrawRequest.withdrawData,
+    });
+  };
+};
+export const Delete_WithdrawRequest = withdrawRequest => {
+  return dispatch => {
+    firestore()
+      .collection('withdrawRequest')
+      .doc(withdrawRequest.id)
+      .delete()
+      .then(() => {
+        dispatch({
+          type: 'DELETE_WITHDRAW_REQUEST',
+          payload: withdrawRequest,
+        });
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
+};

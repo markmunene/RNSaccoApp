@@ -19,6 +19,7 @@ const RenderSlider = () => {
       horizontal
       showsHorizontalScrollIndicator={false}
       scrollEventThrottle={16}
+      pagingEnabled={true}
       snapToAlignment="center"
       onScroll={Animated.event([{nativeEvent: {contentOffset: {x: Scrollx}}}], {
         useNativeDriver: false,
@@ -271,7 +272,7 @@ function RenderOptions({navigation}) {
             marginTop: SIZES.padding,
           }}>
           <TouchableOpacity
-            onPress={() => navigation.navigate('GroupTransactions')}
+            onPress={() => navigation.navigate('JamboSavings')}
             style={{
               width: 100,
               height: 100,

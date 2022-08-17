@@ -17,6 +17,7 @@ import LoanPreCondtions from './LoanPreCondtions';
 import LoansLandingScreen from './LoansLandingScreen';
 import GroupsJointsClientSide from './GroupsjointsClientSide';
 import AdminRoute from './AdminRoute';
+import InitailScreen from './InitailScreen';
 
 import AllGroups from './AllGroups';
 // import Home from './Home';
@@ -27,8 +28,10 @@ import {icons, COLORS, SIZES} from '../constants';
 import Svg, {Path} from 'react-native-svg';
 import {home} from '../constants/icons';
 import GroupsjointsClientSide from './GroupsjointsClientSide';
+import {useSelector} from 'react-redux';
 
 const BottomNavigation = ({navigation}) => {
+  let isLogin = useSelector(state => state.users.isLogin);
   const Tab = createBottomTabNavigator();
   const TabBarCustomButton = ({accessibilityState, children, onPress}) => {
     let isSelected = accessibilityState.selected;
@@ -77,6 +80,7 @@ const BottomNavigation = ({navigation}) => {
       );
     }
   };
+  // console.log('isLogin', isLogin);
   return (
     <Tab.Navigator
       tabBarOptions={{
@@ -88,7 +92,7 @@ const BottomNavigation = ({navigation}) => {
       }}>
       <Tab.Screen
         name="init"
-        component={Home}
+        component={isLogin.length > 0 ? Home : Login}
         options={{
           headerShown: false,
           tabBarIcon: ({focused}) => (
@@ -107,69 +111,73 @@ const BottomNavigation = ({navigation}) => {
           },
         }}
       />
-      <Tab.Screen
-        name="loanR"
-        component={LoanRequest}
-        options={{
-          headerShown: false,
-          tabBarIcon: focused => (
-            <Image
-              source={icons.Withdraw}
-              resizeMode="contain"
-              style={{
-                width: 25,
-                height: 25,
-                tintColor: focused ? COLORS.primary : COLORS.secondary,
-              }}
-            />
-          ),
-          tabBarButton: props => {
-            return <TabBarCustomButton {...props} />;
-          },
-        }}
-      />
-      <Tab.Screen
-        name="savings"
-        component={IndividualSavings}
-        options={{
-          headerShown: false,
-          tabBarIcon: focused => (
-            <Image
-              source={icons.money3}
-              resizeMode="contain"
-              style={{
-                width: 25,
-                height: 25,
-                tintColor: focused ? COLORS.primary : COLORS.secondary,
-              }}
-            />
-          ),
-          tabBarButton: props => {
-            return <TabBarCustomButton {...props} />;
-          },
-        }}
-      />
-      <Tab.Screen
-        name="groups"
-        component={GroupsjointsClientSide}
-        options={{
-          headerShown: false,
-          tabBarIcon: focused => (
-            <Image
-              source={icons.users}
-              resizeMode="contain"
-              style={{
-                width: 25,
-                height: 25,
-                tintColor: focused ? COLORS.primary : COLORS.secondary,
-              }}
-            />
-          ),
-          tabBarButton: props => {
-            return <TabBarCustomButton {...props} />;
-          },
-        }}
-      />
+      {isLogin.length > 0 ? (
+        <>
+          <Tab.Screen
+            name="loanR"
+            component={LoanRequest}
+            options={{
+              headerShown: false,
+              tabBarIcon: focused => (
+                <Image
+                  source={icons.Withdraw}
+                  resizeMode="contain"
+                  style={{
+                    width: 25,
+                    height: 25,
+                    tintColor: focused ? COLORS.primary : COLORS.secondary,
+                  }}
+                />
+              ),
+              tabBarButton: props => {
+                return <TabBarCustomButton {...props} />;
+              },
+            }}
+          />
+          <Tab.Screen
+            name="savings"
+            component={IndividualSavings}
+            options={{
+              headerShown: false,
+              tabBarIcon: focused => (
+                <Image
+                  source={icons.money3}
+                  resizeMode="contain"
+                  style={{
+                    width: 25,
+                    height: 25,
+                    tintColor: focused ? COLORS.primary : COLORS.secondary,
+                  }}
+                />
+              ),
+              tabBarButton: props => {
+                return <TabBarCustomButton {...props} />;
+              },
+            }}
+          />
+          <Tab.Screen
+            name="groups"
+            component={GroupsjointsClientSide}
+            options={{
+              headerShown: false,
+              tabBarIcon: focused => (
+                <Image
+                  source={icons.users}
+                  resizeMode="contain"
+                  style={{
+                    width: 25,
+                    height: 25,
+                    tintColor: focused ? COLORS.primary : COLORS.secondary,
+                  }}
+                />
+              ),
+              tabBarButton: props => {
+                return <TabBarCustomButton {...props} />;
+              },
+            }}
+          />
+        </>
+      ) : null}
     </Tab.Navigator>
   );
 };

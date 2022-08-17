@@ -9,10 +9,12 @@ import {
   FlatList,
 } from 'react-native';
 import React from 'react';
+
 import {icons, images, COLORS, SIZES, FONTS} from '../constants';
 import {useSelector} from 'react-redux';
 
 const GroupjointsClientSide = ({navigation}) => {
+  const AccountBalance1 = useSelector(state => state.deposit.depositBalance);
   let depositData = useSelector(state => state.deposit.deposit);
 
   const groups = useSelector(state => state.accounts.groups);
@@ -55,6 +57,8 @@ const GroupjointsClientSide = ({navigation}) => {
   };
 
   const LoanDetails = ({item}) => {
+    let admin = useSelector(state => state.users.AllAdmins);
+
     const [showStatement, setShowStatement] = React.useState(false);
     const [showDetails, setShowDetails] = React.useState(false);
 
@@ -64,6 +68,32 @@ const GroupjointsClientSide = ({navigation}) => {
     const handleDeposit = ({item}) => {
       HandleShowDetails();
       navigation.navigate('DepositAccount', {item});
+    };
+    const HandleWithdrawal = ({item}) => {
+      HandleShowDetails();
+      navigation.navigate('WithdrawRequest', {item});
+    };
+    const HandleRequestDelete = ({item}) => {
+      // Alert.alert(
+      //   'delete action confirmation',
+      //   'Are  u sure you want to delete this request',
+      //   [
+      //     {
+      //       text: 'Cancel',
+      //       onPress: () => setIsDelete(false),
+      //       style: 'cancel',
+      //     },
+      //     {
+      //       text: 'OK',
+      //       onPress: () => {
+      //         try {
+      //         } catch (error) {
+      //           console.log('fire ', error);
+      //         }
+      //       },
+      //     },
+      //   ],
+      // );
     };
     const HandleTranscation = id => {
       let Transactions = depositData.filter(item => item.groupId == id.id);
@@ -75,6 +105,16 @@ const GroupjointsClientSide = ({navigation}) => {
     };
 
     const [handleStatement, setHandleStatement] = React.useState(200);
+
+    const CalculateBalance = (groupName, id) => {
+      let tempbalance = AccountBalance1.filter(item => {
+        let groupId = id + groupName;
+        if (item.id == groupId) {
+          return item;
+        }
+      });
+      return tempbalance[0]?.balance;
+    };
 
     React.useEffect(() => {
       let mount = true;
@@ -106,15 +146,12 @@ const GroupjointsClientSide = ({navigation}) => {
               justifyContent: 'space-between',
               width: '100%',
             }}>
-            <View style={{padding: SIZES.padding2, width: '60%'}}>
-              <Text style={{...FONTS.h2, color: COLORS.primary}}>
+            <View style={{padding: SIZES.padding2, width: '70%'}}>
+              <Text style={{...FONTS.h3, color: COLORS.primary}}>
                 Total Savings
               </Text>
               <Text style={{...FONTS.h2, color: COLORS.secondary}}>
-                Ksh{' '}
-                {depositData
-                  .filter(DepData => DepData.groupId == item.id)
-                  .reduce((acc, item) => acc + Number(item.amount), 0)}
+                Ksh {CalculateBalance(item.groupName, item.id)}
               </Text>
 
               <Text style={{...FONTS.h4, color: COLORS.primary}}>
@@ -131,25 +168,68 @@ const GroupjointsClientSide = ({navigation}) => {
                 flexDirection: 'row',
               }}>
               {showDetails ? (
-                <TouchableOpacity
-                  onPress={() => handleDeposit({item})}
-                  style={{
-                    backgroundColor: COLORS.secondary,
-                    width: 80,
-                    height: 35,
-                    marginRight: 20,
-                    borderRadius: 10,
-                  }}>
-                  <Text
+                <View>
+                  <TouchableOpacity
+                    onPress={() => handleDeposit({item})}
                     style={{
-                      ...FONTS.h4,
-                      color: COLORS.white,
-                      textAlign: 'center',
-                      padding: 5,
+                      backgroundColor: COLORS.secondary,
+                      width: 80,
+                      height: 35,
+                      marginRight: 20,
+                      borderRadius: 10,
                     }}>
-                    deposit
-                  </Text>
-                </TouchableOpacity>
+                    <Text
+                      style={{
+                        ...FONTS.h4,
+                        color: COLORS.white,
+                        textAlign: 'center',
+                        padding: 5,
+                      }}>
+                      deposit
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => HandleWithdrawal({item})}
+                    style={{
+                      backgroundColor: COLORS.secondary,
+                      width: 80,
+                      height: 35,
+                      marginRight: 20,
+                      marginTop: 10,
+                      borderRadius: 10,
+                    }}>
+                    <Text
+                      style={{
+                        ...FONTS.h4,
+                        color: COLORS.white,
+                        textAlign: 'center',
+                        padding: 5,
+                      }}>
+                      withdraw
+                    </Text>
+                  </TouchableOpacity>
+                  {admin.length > 0 ? (
+                    <TouchableOpacity
+                      onPress={() => HandleRequestDelete({item})}
+                      style={{
+                        backgroundColor: COLORS.secondary,
+                        width: 80,
+                        height: 20,
+                        marginRight: 20,
+                        marginTop: 10,
+                        borderRadius: 10,
+                      }}>
+                      <Text
+                        style={{
+                          ...FONTS.body5,
+                          color: COLORS.white,
+                          textAlign: 'center',
+                        }}>
+                        Delete
+                      </Text>
+                    </TouchableOpacity>
+                  ) : null}
+                </View>
               ) : (
                 <TouchableOpacity
                   style={{marginLeft: '70%', width: '30%'}}

@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   FlatList,
 } from 'react-native';
-import { icons, images, COLORS, SIZES, FONTS } from '../constants';
+import {icons, images, COLORS, SIZES, FONTS} from '../constants';
 import moment from 'moment';
 
 import React from 'react';
@@ -72,7 +72,7 @@ function RenderTransactions({item}) {
         }}>
         <View style={{flexDirection: 'row'}}>
           <Text style={{...FONTS.h4, color: COLORS.primary}}>
-           Ksh {item.Amount}
+            Ksh {item.Amount}
           </Text>
         </View>
         <View style={{flexDirection: 'row'}}>
@@ -82,7 +82,7 @@ function RenderTransactions({item}) {
               color: COLORS.primary,
               marginRight: 5,
             }}>
-            {moment(item.Date).format('MMM DD, YYYY')}
+            {item.date}
           </Text>
         </View>
       </TouchableOpacity>
@@ -90,27 +90,24 @@ function RenderTransactions({item}) {
   );
 }
 const LoanPaymentHistory = ({navigation, route}) => {
-    let loanId = route.params;
-    let payementHistory = useSelector(state => state.loanRequests.LoanPayment);
-    console.log(payementHistory);
-    
+  let loanId = route.params;
+  let payementHistory = useSelector(state => state.loanRequests.LoanPayment);
+  // console.log(payementHistory);
+
   const [data, setData] = React.useState([]);
- 
-    React.useEffect(() =>
-    {
-        let tempData = [];
-        payementHistory.filter(item => {
-          if (loanId.id == item.LoanId)
-          {
-            tempData.push(item);
-          }
-          
-        });
+
+  React.useEffect(() => {
+    let tempData = [];
+    payementHistory.filter(item => {
+      if (loanId.id == item.LoanId) {
+        tempData.push(item);
+      }
+    });
     setData(tempData);
   }, [route.params]);
   return (
     <SafeAreaView style={styles.container}>
-      <RenderTitle navigation={navigation} title='Loan Transactions' />
+      <RenderTitle navigation={navigation} title="Loan Transactions" />
       {/* renderRequuest */}
       <View
         style={{

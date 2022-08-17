@@ -5,6 +5,7 @@ import {
   SafeAreaView,
   ScrollView,
   Image,
+  Alert,
   TouchableOpacity,
   FlatList,
 } from 'react-native';
@@ -16,7 +17,7 @@ import {useSelector, useDispatch} from 'react-redux/';
 
 import React from 'react';
 
-import { DeleteUser } from './Actions/RegisteredUsers';
+import {DeleteUser} from './Actions/RegisteredUsers';
 
 function RenderTitle({navigation}) {
   return (
@@ -79,8 +80,7 @@ function RenderTitle({navigation}) {
   );
 }
 
-const Allusers = ({ navigation }) =>
-{
+const Allusers = ({navigation}) => {
   const dispatch = useDispatch();
   function RenderRequest({item, navigation}) {
     return (
@@ -110,7 +110,9 @@ const Allusers = ({ navigation }) =>
             elevation: 3,
           }}>
           <View>
-            <Text style={{...FONTS.h4, color: COLORS.primary}}>{item.Name}</Text>
+            <Text style={{...FONTS.h4, color: COLORS.primary}}>
+              {item.Name}
+            </Text>
             <Text style={{...FONTS.body5, color: COLORS.primary}}>
               {item.Phone}
             </Text>
@@ -124,9 +126,7 @@ const Allusers = ({ navigation }) =>
               }}>
               {item.IdNo}
             </Text>
-            <TouchableOpacity
-            onPress={() => dispatch(DeleteUser({item}))}
-            >
+            <TouchableOpacity onPress={() => HandleRequestDelete(item)}>
               <Image
                 source={icons.trash}
                 resizeMode="contain"
@@ -139,7 +139,31 @@ const Allusers = ({ navigation }) =>
     );
   }
   const Users = useSelector(state => state.users.Users);
-
+  const HandleRequestDelete = async item => {
+    // alert(item.id);
+    Alert.alert(
+      'delete action confirmation',
+      'Are  u sure you want to delete this Member',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {
+          text: 'OK',
+          onPress: () => {
+            try {
+              dispatch(DeleteUser({id: item.id})) && navigation.goBack();
+              // dispatch(DeleteLoanRequest({id: item.id}))
+            } catch (error) {
+              console.log('fire ', error);
+            }
+          },
+        },
+      ],
+    );
+  };
   return (
     <SafeAreaView style={styles.container}>
       <RenderTitle navigation={navigation} />

@@ -1,5 +1,6 @@
 const initialState = {
   deposit: [],
+  depositBalance: [],
 };
 export default function DepositReducer(state = initialState, action) {
   switch (action.type) {
@@ -7,6 +8,11 @@ export default function DepositReducer(state = initialState, action) {
       return {
         ...state,
         deposit: action.payload,
+      };
+    case 'getAllDepositBalance':
+      return {
+        ...state,
+        depositBalance: action.payload,
       };
     case 'STORE_DEPOSIT':
       let tempDeposit = state.deposit;
@@ -16,7 +22,14 @@ export default function DepositReducer(state = initialState, action) {
         ...state,
         deposit: Object.assign([], tempDeposit),
       };
+    case 'UpdateDepositBalance':
+      let tempDepositBalance = state.depositBalance;
 
+      let tempbalance = Object.assign([], action.payload);
+      return {
+        ...state,
+        depositBalance: Object.assign([], tempbalance),
+      };
     default:
       return state;
   }

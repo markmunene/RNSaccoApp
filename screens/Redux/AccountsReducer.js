@@ -16,6 +16,21 @@ export default function AccountsReducer(state = initialState, action) {
         ...state,
         groups: action.payload,
       };
+    case 'ADD_NEW_GROUP':
+      let tempAccounts = state.groups;
+      tempAccounts.unshift(action.payload);
+
+      return {
+        ...state,
+        groups: Object.assign([], tempAccounts),
+      };
+    case 'ADD_NEW_Joints':
+      let tempAccounts1 = state.joints;
+      tempAccounts1.unshift(action.payload);
+      return {
+        ...state,
+        groups: Object.assign([], tempAccounts1),
+      };
     default:
       return state;
   }

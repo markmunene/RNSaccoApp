@@ -12,11 +12,17 @@ import React from 'react';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {icons, images, COLORS, SIZES, FONTS} from '../constants';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 
-import {UpdateUser, AddnewUser} from './Actions/RegisteredUsers';
+import {
+  UpdateUser,
+  AddnewUser,
+  RegisteredUsers,
+} from './Actions/RegisteredUsers';
 
 const RegisterClients = ({navigation, route}) => {
+  let admin = useSelector(state => state.users.AllAdmins);
+
   const user = route.params;
   const [Name, setName] = React.useState('');
   const [FirstName, setFirstName] = React.useState('');
@@ -29,7 +35,7 @@ const RegisterClients = ({navigation, route}) => {
   const [District, setDistrict] = React.useState('');
   const [Division, setDivision] = React.useState('');
   const [SubCounty, setSubCounty] = React.useState('');
-  const [Village, setVillage] = React.useState('nduuri');
+  const [Village, setVillage] = React.useState('');
   const [BusinessLocation, setBusinessLocation] = React.useState('');
   const [BusinessName, setBusinessName] = React.useState('');
   const [Estate, setEstate] = React.useState('');
@@ -81,104 +87,110 @@ const RegisterClients = ({navigation, route}) => {
       setEmail(userData?.Email);
       setIdNo(userData?.IdNo);
       setBusinessAddress(userData?.BusinessAddress);
+      setpassword(userData?.password);
+      setIntroducedBy(userData?.IntroducedBy);
+      setregisteredBy(userData?.registeredBy);
     }
   }, []);
   const dispatch = useDispatch();
 
   async function HandleSubmit() {
     // save users data in firebase
-    if (
-      Name !== '' &&
-      Pin !== '' &&
-      Phone !== '' &&
-      Email !== '' &&
-      IdNo !== '' &&
-      BusinessAddress !== ''
-    ) {
-      if (user != undefined) {
-        // update users collection
-        dispatch(
-          UpdateUser({
-            id: user.item.id,
-            Name,
-            FirstName,
-            DOB,
-            MaritalStatus,
-            Pin,
-            Location,
-            SubLocation,
-            County,
-            District,
-            Division,
-            SubCounty,
-            Village,
-            BusinessLocation,
-            Estate,
-            PhaseSection,
-            KFirstName,
-            KOtherNames,
 
-            kPhoneNumber,
-            kAddress,
-            RegAmount,
-            RecieptNo,
-            KRelation,
-            Phone,
-            Email,
-            IdNo,
-            BusinessAddress,
-          }),
-        );
-        await firestore()
-          .collection('users')
-          .doc(user.item.id)
-          .update({
-            Name,
-            FirstName,
-            DOB,
-            MaritalStatus,
-            Pin,
-            Location,
-            SubLocation,
-            County,
-            District,
-            Division,
-            SubCounty,
-            Village,
-            BusinessLocation,
+    try {
+      if (
+        Name !== '' &&
+        Pin !== '' &&
+        Phone !== '' &&
+        Email !== '' &&
+        IdNo !== '' &&
+        BusinessAddress !== ''
+      ) {
+        if (user != undefined) {
+          // update users collection
+          dispatch(
+            UpdateUser({
+              id: user.item.id,
+              Name,
+              FirstName,
+              DOB,
+              MaritalStatus,
+              Pin,
+              Location,
+              SubLocation,
+              County,
+              District,
+              Division,
+              SubCounty,
+              Village,
+              BusinessLocation,
+              Estate,
+              PhaseSection,
+              KFirstName,
+              KOtherNames,
+              kPhoneNumber,
+              kAddress,
+              RegAmount,
+              RecieptNo,
+              KRelation,
+              Phone,
+              Email,
+              IdNo,
+              BusinessAddress,
+              isadmin: false,
+            }),
+          );
+          await firestore()
+            .collection('users')
+            .doc(user.item.id)
+            .update({
+              Name,
+              FirstName,
+              DOB,
+              MaritalStatus,
+              Pin,
+              Location,
+              SubLocation,
+              County,
+              District,
+              Division,
+              SubCounty,
+              Village,
+              BusinessLocation,
 
-            Estate,
-            PhaseSection,
-            KFirstName,
-            KOtherNames,
+              Estate,
+              PhaseSection,
+              KFirstName,
+              KOtherNames,
 
-            kPhoneNumber,
-            kAddress,
-            RegAmount,
-            RecieptNo,
-            KRelation,
-            Phone,
-            Email,
-            IdNo,
-            IntroducedBy,
-            registeredBy,
-            BusinessAddress,
-          })
-          .then(() => {
-            navigation.goBack();
-            // console.log('user updated');
-            alert('user updated');
-          })
-          .catch(error => {
-            console.log(error);
-          });
-      } else {
-        await auth()
-          .createUserWithEmailAndPassword(Email, password)
-          .then(async user =>
-          {
-            let userData = {
-              id: user.user.uid,
+              kPhoneNumber,
+              kAddress,
+              RegAmount,
+              RecieptNo,
+              KRelation,
+              Phone,
+              Email,
+              IdNo,
+              IntroducedBy,
+              registeredBy,
+              BusinessAddress,
+              isadmin: false,
+            })
+            .then(() => {
+              navigation.goBack();
+              dispatch(RegisteredUsers());
+              // console.log('user updated');
+              alert('user updated');
+            })
+            .catch(error => {
+              console.log(error);
+            });
+        } else {
+          await auth()
+            .createUserWithEmailAndPassword(Email, password)
+            .then(async user => {
+              let userData = {
+                id: user.user.uid,
                 FirstName,
                 Name,
                 DOB,
@@ -201,34 +213,43 @@ const RegisterClients = ({navigation, route}) => {
                 RegAmount,
                 RecieptNo,
                 Pin,
+                password,
                 Phone,
                 Email,
                 IdNo,
                 BusinessAddress,
                 IntroducedBy,
                 registeredBy,
+                isadmin: false,
                 date: Date.now(),
-            }
-            await firestore()
-              .collection('users')
-              .doc(user.user.uid)
-              .set({
-                ...userData,
-              })
-              .then(() =>
-              {
-                dispatch(AddUser({userData}));
-                navigation.navigate('login');
-              })
-              .catch(error => {
-                alert(error);
-                console.log(error);
-              });
-          })
-          .catch(error => {
-            console.log(error);
-          });
+              };
+              await firestore()
+                .collection('users')
+                .doc(user.user.uid)
+                .set({
+                  ...userData,
+                })
+                .then(() => {
+                  dispatch(RegisteredUsers({userData}));
+                  alert('user added');
+                  auth().signInWithEmailAndPassword(
+                    admin[0]?.Email,
+                    admin[0]?.password,
+                  );
+                  // navigation.navigate('login');
+                })
+                .catch(error => {
+                  alert(error);
+                  console.log(error);
+                });
+            })
+            .catch(error => {
+              console.log(error);
+            });
+        }
       }
+    } catch (error) {
+      alert(error.message);
     }
   }
   return (
@@ -276,7 +297,6 @@ const RegisterClients = ({navigation, route}) => {
             <Text style={styles.legend}>FirstName</Text>
 
             <TextInput
-              
               value={FirstName}
               onChangeText={text => setFirstName(text)}
               style={{
@@ -302,7 +322,6 @@ const RegisterClients = ({navigation, route}) => {
             }}>
             <Text style={styles.legend}>Other Names</Text>
             <TextInput
-              
               value={Name}
               onChangeText={text => setName(text)}
               style={{
@@ -334,9 +353,8 @@ const RegisterClients = ({navigation, route}) => {
               alignSelf: 'center',
               borderRadius: 10,
             }}>
-            <Text style={styles.legend}>phone </Text>
+            <Text style={styles.legend}>phone 2547... </Text>
             <TextInput
-             
               keyboardType="number-pad"
               value={Phone}
               onChangeText={text => setPhone(text)}
@@ -364,7 +382,6 @@ const RegisterClients = ({navigation, route}) => {
             }}>
             <Text style={styles.legend}>ID</Text>
             <TextInput
-              
               keyboardType="number-pad"
               value={IdNo}
               onChangeText={text => setIdNo(text)}
@@ -400,7 +417,6 @@ const RegisterClients = ({navigation, route}) => {
             }}>
             <Text style={styles.legend}>DOB</Text>
             <TextInput
-            
               value={DOB}
               onChangeText={text => setDOB(text)}
               style={{
@@ -426,7 +442,6 @@ const RegisterClients = ({navigation, route}) => {
             }}>
             <Text style={styles.legend}>Marital status</Text>
             <TextInput
-              
               value={MaritalStatus}
               onChangeText={text => setMaritalStatus(text)}
               style={{
@@ -609,7 +624,6 @@ const RegisterClients = ({navigation, route}) => {
             }}>
             <Text style={styles.legend}>Division</Text>
             <TextInput
-              
               value={Division}
               onChangeText={text => setDivision(text)}
               style={{
@@ -619,7 +633,6 @@ const RegisterClients = ({navigation, route}) => {
                 color: COLORS.primary,
               }}
             />
-           
           </View>
         </View>
         {/* address  */}
@@ -645,7 +658,6 @@ const RegisterClients = ({navigation, route}) => {
             }}>
             <Text style={styles.legend}>Location</Text>
             <TextInput
-              
               value={Location}
               onChangeText={text => setLocation(text)}
               style={{
@@ -655,7 +667,6 @@ const RegisterClients = ({navigation, route}) => {
                 color: COLORS.primary,
               }}
             />
-            
           </View>
           <View
             style={{
@@ -673,7 +684,6 @@ const RegisterClients = ({navigation, route}) => {
             }}>
             <Text style={styles.legend}>Sub Location</Text>
             <TextInput
-              
               value={SubLocation}
               onChangeText={text => setSubLocation(text)}
               style={{
@@ -683,8 +693,33 @@ const RegisterClients = ({navigation, route}) => {
                 color: COLORS.primary,
               }}
             />
-        
           </View>
+        </View>
+        <View
+          style={{
+            ...styles.fieldSet,
+            height: 40,
+            width: '90%',
+
+            padding: SIZES.padding,
+            borderColor: COLORS.primary,
+            borderWidth: 1,
+            flexDirection: 'row',
+            margin: SIZES.padding,
+            alignSelf: 'center',
+            borderRadius: 10,
+          }}>
+          <Text style={styles.legend}>Village</Text>
+          <TextInput
+            value={Village}
+            onChangeText={text => setVillage(text)}
+            style={{
+              width: '90%',
+              height: 40,
+              alignSelf: 'center',
+              color: COLORS.primary,
+            }}
+          />
         </View>
         {/* address  */}
         <View
@@ -709,7 +744,6 @@ const RegisterClients = ({navigation, route}) => {
             }}>
             <Text style={styles.legend}>Phase/Section</Text>
             <TextInput
-              
               value={PhaseSection}
               onChangeText={text => setPhaseSection(text)}
               style={{
@@ -719,7 +753,6 @@ const RegisterClients = ({navigation, route}) => {
                 color: COLORS.primary,
               }}
             />
-           
           </View>
           <View
             style={{
@@ -737,7 +770,6 @@ const RegisterClients = ({navigation, route}) => {
             }}>
             <Text style={styles.legend}>Estate</Text>
             <TextInput
-              
               value={Estate}
               onChangeText={text => setEstate(text)}
               style={{
@@ -747,7 +779,6 @@ const RegisterClients = ({navigation, route}) => {
                 color: COLORS.primary,
               }}
             />
-           
           </View>
         </View>
         <Text style={{...FONTS.h4, textAlign: 'center', color: COLORS.primary}}>
@@ -775,7 +806,6 @@ const RegisterClients = ({navigation, route}) => {
             }}>
             <Text style={styles.legend}>First Name</Text>
             <TextInput
-              
               value={KFirstName}
               onChangeText={text => setKFirstName(text)}
               style={{
@@ -785,7 +815,6 @@ const RegisterClients = ({navigation, route}) => {
                 color: COLORS.primary,
               }}
             />
-            
           </View>
           <View
             style={{
@@ -802,7 +831,6 @@ const RegisterClients = ({navigation, route}) => {
             }}>
             <Text style={styles.legend}>Other Name</Text>
             <TextInput
-             
               value={KOtherNames}
               onChangeText={text => setKOtherNames(text)}
               style={{
@@ -812,7 +840,6 @@ const RegisterClients = ({navigation, route}) => {
                 color: COLORS.primary,
               }}
             />
-            
           </View>
         </View>
         <View
@@ -837,7 +864,6 @@ const RegisterClients = ({navigation, route}) => {
             }}>
             <Text style={styles.legend}>Relation</Text>
             <TextInput
-              
               value={KRelation}
               onChangeText={text => setKRelation(text)}
               style={{
@@ -847,7 +873,6 @@ const RegisterClients = ({navigation, route}) => {
                 color: COLORS.primary,
               }}
             />
-          
           </View>
           <View
             style={{
@@ -864,7 +889,6 @@ const RegisterClients = ({navigation, route}) => {
             }}>
             <Text style={styles.legend}>Address</Text>
             <TextInput
-              
               value={kAddress}
               onChangeText={text => setkAddress(text)}
               style={{
@@ -874,7 +898,6 @@ const RegisterClients = ({navigation, route}) => {
                 color: COLORS.primary,
               }}
             />
-            
           </View>
         </View>
         {/* Next of keen Phone Number */}
@@ -891,9 +914,8 @@ const RegisterClients = ({navigation, route}) => {
             alignSelf: 'center',
             borderRadius: 10,
           }}>
-          <Text style={styles.legend}>Phone Number</Text>
+          <Text style={styles.legend}>Phone Number 2547...</Text>
           <TextInput
-            
             value={kPhoneNumber}
             onChangeText={text => setkPhoneNumber(text)}
             style={{
@@ -903,7 +925,6 @@ const RegisterClients = ({navigation, route}) => {
               color: COLORS.primary,
             }}
           />
-         
         </View>
 
         <Text style={{...FONTS.h4, textAlign: 'center', color: COLORS.primary}}>
@@ -931,7 +952,6 @@ const RegisterClients = ({navigation, route}) => {
             }}>
             <Text style={styles.legend}>Amount</Text>
             <TextInput
-              
               keyboardType="numeric"
               value={RegAmount}
               onChangeText={text => setRegAmount(text)}
@@ -942,7 +962,6 @@ const RegisterClients = ({navigation, route}) => {
                 color: COLORS.primary,
               }}
             />
-           
           </View>
           <View
             style={{
@@ -959,7 +978,6 @@ const RegisterClients = ({navigation, route}) => {
             }}>
             <Text style={styles.legend}>RecieptNo</Text>
             <TextInput
-              
               keyboardType="numeric"
               value={RecieptNo}
               onChangeText={text => setRecieptNo(text)}
@@ -970,7 +988,6 @@ const RegisterClients = ({navigation, route}) => {
                 color: COLORS.primary,
               }}
             />
-           
           </View>
         </View>
         <Text style={{...FONTS.h4, textAlign: 'center', color: COLORS.primary}}>
@@ -992,7 +1009,6 @@ const RegisterClients = ({navigation, route}) => {
           }}>
           <Text style={styles.legend}>Email</Text>
           <TextInput
-           
             value={Email}
             onChangeText={text => setEmail(text)}
             style={{
@@ -1037,7 +1053,6 @@ const RegisterClients = ({navigation, route}) => {
             }}>
             <Text style={styles.legend}>Pin</Text>
             <TextInput
-              
               keyboardType="number-pad"
               value={Pin}
               onChangeText={text => setPin(text)}
@@ -1075,7 +1090,6 @@ const RegisterClients = ({navigation, route}) => {
             }}>
             <Text style={styles.legend}>Password</Text>
             <TextInput
-              
               value={password}
               onChangeText={text => setpassword(text)}
               style={{
@@ -1113,7 +1127,6 @@ const RegisterClients = ({navigation, route}) => {
           }}>
           <Text style={styles.legend}>Registered By</Text>
           <TextInput
-            
             value={registeredBy}
             onChangeText={text => setregisteredBy(text)}
             style={{
@@ -1123,7 +1136,6 @@ const RegisterClients = ({navigation, route}) => {
               color: COLORS.primary,
             }}
           />
-          
         </View>
         {/* Email */}
         <View
@@ -1141,7 +1153,6 @@ const RegisterClients = ({navigation, route}) => {
           }}>
           <Text style={styles.legend}>IntroducedBy</Text>
           <TextInput
-            
             value={IntroducedBy}
             onChangeText={text => setIntroducedBy(text)}
             style={{
@@ -1151,7 +1162,6 @@ const RegisterClients = ({navigation, route}) => {
               color: COLORS.primary,
             }}
           />
-          
         </View>
         {/* others */}
         <TouchableOpacity
@@ -1196,6 +1206,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     backgroundColor: '#fff',
     color: COLORS.primary,
-    borderRadius:2,
+    borderRadius: 2,
   },
 });

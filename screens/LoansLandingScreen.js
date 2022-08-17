@@ -10,6 +10,8 @@ import {
 import React from 'react';
 import {icons, images, COLORS, SIZES, FONTS} from '../constants';
 import {Picker} from '@react-native-picker/picker';
+import ModalFilterPicker from 'react-native-modal-filter-picker';
+
 import Slider from '@react-native-community/slider';
 // import UserData from './UsersData';
 import {useSelector} from 'react-redux';
@@ -95,6 +97,7 @@ const LoanDetails = ({item, navigation}) => {
       }
     }
   }, [showStatement]);
+
   return (
     <View style={{height: handleStatement}}>
       <View
@@ -175,20 +178,70 @@ const LoanDetails = ({item, navigation}) => {
 const LoansLandingScreen = ({navigation}) => {
   const Loandata = useSelector(state => state.loanRequests.ApprovedLoans);
   const [FilteredLoans, setFilteredLoans] = React.useState('');
-  const AuthUser = useSelector(state => state.users.AuthUser);
+  // const AuthUser = useSelector(state => state.users.AuthUser);
+
+  const [ModalVisible, setModalVisible] = React.useState(false);
+  const [SelectedUserId, setSelectedUserId] = React.useState('');
+  let user = useSelector(state => state.users.AllusersMinData);
+  let options = useSelector(state => state.users.userDataforModal);
+  const onSearch = text => {
+    // console.log(text, 'texttttttttttttttttttttttttttttttt');
+    setSelectedUserId(text);
+    setModalVisible(false);
+    let filtered_user_loans = Loandata.filter(
+      item => item.user_id === text.key,
+    );
+    setFilteredLoans(filtered_user_loans);
+  };
   React.useEffect(() => {
-    let tempData = [];
-    Loandata.filter(item => {
-      if (item.user_id === AuthUser[0].uid) {
-        tempData.push(item);
-      }
-    });
-    setFilteredLoans(tempData);
+    // let tempData = [];
+    // Loandata.filter(item => {
+    //   if (item.user_id === AuthUser[0].uid) {
+    //     tempData.push(item);
+    //   }
+    // });
+    // setFilteredLoans(tempData);
   }, [Loandata]);
   return (
     <SafeAreaView style={styles.container}>
       <RenderTitle navigation={navigation} />
+      <ModalFilterPicker
+        visible={ModalVisible}
+        onSelect={value => onSearch(value)}
+        onCancel={() => setModalVisible(false)}
+        options={options}
+      />
 
+      <TouchableOpacity
+        onPress={() => setModalVisible(!ModalVisible)}
+        style={{
+          width: '90%',
+          height: 40,
+          marginTop: 10,
+          justifyContent: 'center',
+          alignItems: 'center',
+          alignSelf: 'center',
+          borderRadius: 10,
+          backgroundColor: COLORS.darkgray,
+        }}>
+        <Text
+          style={{
+            ...FONTS.h3,
+            color: COLORS.black,
+            textAlign: 'center',
+          }}>
+          select User
+        </Text>
+      </TouchableOpacity>
+      <Text
+        style={{
+          ...FONTS.h4,
+          color: COLORS.primary,
+          marginTop: SIZES.padding / 0.7,
+          alignSelf: 'center',
+        }}>
+        {SelectedUserId.label}
+      </Text>
       <FlatList
         data={FilteredLoans}
         keyExtractor={(item, index) => index.toString() + item.id}
