@@ -20,8 +20,12 @@ import {
   RegisteredUsers,
 } from './Actions/RegisteredUsers';
 
+import SendSMS from 'react-native-sms';
+import {pin} from '../constants/icons';
+
 const RegisterClients = ({navigation, route}) => {
   let admin = useSelector(state => state.users.AllAdmins);
+  console.log(admin);
 
   const user = route.params;
   const [Name, setName] = React.useState('');
@@ -93,6 +97,24 @@ const RegisterClients = ({navigation, route}) => {
     }
   }, []);
   const dispatch = useDispatch();
+  const formatNumber = number => {
+    if (number.length <= 12) {
+      let num = number.toString();
+      let results = '';
+      if (num.charAt(0) == '0') {
+        results = num.replace(/[^a-zA-Z0-9+]/g, '').substr(1);
+        results = `254${results}`;
+      } else if (num.charAt(0) == '2') {
+        results = number;
+      } else {
+        results = `254${number}`;
+      }
+      // console.log(results);
+      setPhone(results);
+    } else {
+      alert('Invalid phone number');
+    }
+  };
 
   async function HandleSubmit() {
     // save users data in firebase
@@ -108,73 +130,46 @@ const RegisterClients = ({navigation, route}) => {
       ) {
         if (user != undefined) {
           // update users collection
+          let data = {
+            id: user.item.id,
+            Name,
+            FirstName,
+            DOB,
+            MaritalStatus,
+            Pin,
+            Location,
+            SubLocation,
+            County,
+            District,
+            Division,
+            SubCounty,
+            Village,
+            BusinessLocation,
+            Estate,
+            PhaseSection,
+            KFirstName,
+            KOtherNames,
+            kPhoneNumber,
+            kAddress,
+            RegAmount,
+            RecieptNo,
+            KRelation,
+            Phone,
+            Email,
+            IdNo,
+            BusinessAddress,
+            isadmin: admin.length > 0 ? true : false,
+          };
           dispatch(
             UpdateUser({
-              id: user.item.id,
-              Name,
-              FirstName,
-              DOB,
-              MaritalStatus,
-              Pin,
-              Location,
-              SubLocation,
-              County,
-              District,
-              Division,
-              SubCounty,
-              Village,
-              BusinessLocation,
-              Estate,
-              PhaseSection,
-              KFirstName,
-              KOtherNames,
-              kPhoneNumber,
-              kAddress,
-              RegAmount,
-              RecieptNo,
-              KRelation,
-              Phone,
-              Email,
-              IdNo,
-              BusinessAddress,
-              isadmin: false,
+              ...data,
             }),
           );
           await firestore()
             .collection('users')
             .doc(user.item.id)
             .update({
-              Name,
-              FirstName,
-              DOB,
-              MaritalStatus,
-              Pin,
-              Location,
-              SubLocation,
-              County,
-              District,
-              Division,
-              SubCounty,
-              Village,
-              BusinessLocation,
-
-              Estate,
-              PhaseSection,
-              KFirstName,
-              KOtherNames,
-
-              kPhoneNumber,
-              kAddress,
-              RegAmount,
-              RecieptNo,
-              KRelation,
-              Phone,
-              Email,
-              IdNo,
-              IntroducedBy,
-              registeredBy,
-              BusinessAddress,
-              isadmin: false,
+              ...data,
             })
             .then(() => {
               navigation.goBack();
@@ -230,8 +225,36 @@ const RegisterClients = ({navigation, route}) => {
                   ...userData,
                 })
                 .then(() => {
+                  alert('Member Registered successively');
+                  SendSMS.send(
+                    {
+                      body: `You have been sucessively Registered to sky star sacco.Your email :${Email} password : ${password} pin : ${pin}.use These details to login to our app coming soon. Registered By : ${registeredBy}`,
+                      recipients: [Phone],
+                      successTypes: ['sent', 'queued'],
+                      allowAndroidSendWithoutReadPermission: true,
+                    },
+                    (completed, cancelled, error) => {
+                      alert(
+                        'SMS Callback: completed: ' +
+                          completed +
+                          ' cancelled: ' +
+                          cancelled +
+                          'error: ' +
+                          error,
+                      );
+                      console.log(
+                        'SMS Callback: completed: ' +
+                          completed +
+                          ' cancelled: ' +
+                          cancelled +
+                          'error: ' +
+                          error,
+                      );
+                    },
+                  );
+                  navigation.goBack();
+
                   dispatch(RegisteredUsers({userData}));
-                  alert('user added');
                   auth().signInWithEmailAndPassword(
                     admin[0]?.Email,
                     admin[0]?.password,
@@ -240,10 +263,11 @@ const RegisterClients = ({navigation, route}) => {
                 })
                 .catch(error => {
                   alert(error);
-                  console.log(error);
+                  // console.log(error);
                 });
             })
             .catch(error => {
+              alert(error.message);
               console.log(error);
             });
         }
@@ -353,11 +377,11 @@ const RegisterClients = ({navigation, route}) => {
               alignSelf: 'center',
               borderRadius: 10,
             }}>
-            <Text style={styles.legend}>phone 2547... </Text>
+            <Text style={styles.legend}>Mpesa PhoneNumber</Text>
             <TextInput
               keyboardType="number-pad"
               value={Phone}
-              onChangeText={text => setPhone(text)}
+              onChangeText={text => formatNumber(text)}
               style={{
                 width: '90%',
                 height: 40,
@@ -914,7 +938,7 @@ const RegisterClients = ({navigation, route}) => {
             alignSelf: 'center',
             borderRadius: 10,
           }}>
-          <Text style={styles.legend}>Phone Number 2547...</Text>
+          <Text style={styles.legend}>phone 7...(no 07)</Text>
           <TextInput
             value={kPhoneNumber}
             onChangeText={text => setkPhoneNumber(text)}

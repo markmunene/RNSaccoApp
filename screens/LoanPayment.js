@@ -6,6 +6,7 @@ import {
   Image,
   SafeAreaView,
   TextInput,
+  Switch
 } from 'react-native';
 import React from 'react';
 import {Picker} from '@react-native-picker/picker';
@@ -57,22 +58,14 @@ function RenderHeader({navigation}) {
 const LoanPayment = ({navigation, route}) => {
   const dispatch = useDispatch();
   const loanData = route.params;
+  const [useMpesa, setUseMpesa]= React.useState(false)
+
   const [RangeValue, setRangeValue] = React.useState(0);
   const [MinimumLoan, setMinimumLoan] = React.useState(0);
-  const [MaximumLoan, setMaximumLoan] = React.useState(100);
+  const [MaximumLoan, setMaximumLoan] = React.useState(300000);
   const [selectedValue, setSelectedValue] = React.useState(0);
   const DepositData = ['individual', 'jambo account', 'Joint', 'group'];
   // const user = useSelector(state => state.users.shortUserDetails);
-
-  // const [ModalVisible, setModalVisible] = React.useState(false);
-  // const [SelectedUserId, setSelectedUserId] = React.useState('');
-  // let user = useSelector(state => state.users.AllusersMinData);
-  // let options = useSelector(state => state.users.userDataforModal);
-  // const onSearch = text => {
-  //   // console.log(text, 'texttttttttttttttttttttttttttttttt');
-  //   setSelectedUserId(text);
-  //   setModalVisible(false);
-  // };
 
   const HandleLoanPayment = async () => {
     // let filteredUser = user.filter(item => item.id === SelectedUserId.key);
@@ -82,9 +75,9 @@ const LoanPayment = ({navigation, route}) => {
       userId: loanData.item.user_id,
       LoanId: loanData.item.id,
       payment: 'mobile',
-      PhoneNumber: filteredUser[0].PhoneNumber,
+      PhoneNumber: loanData.item.PhoneNumber,
 
-      userName: loanData.item.Name,
+      
       amount: RangeValue,
       date: Date.now(),
     };
@@ -92,22 +85,53 @@ const LoanPayment = ({navigation, route}) => {
       ...loanData.item,
       date: moment(Date.now()).format('MMMM Do YYYY'),
       collection: 'loanPayment',
-      PhoneNumber: '748406477',
+    
       amount: RangeValue,
       Balance: Number(loanData.item.Balance) - Number(RangeValue),
     };
-
-    axios
-      .post(
-        'https://us-central1-saccomgapp.cloudfunctions.net/main/lipaNaMpesaOnline',
-        {...loanToBeUpdated},
-      )
-      .then(res => {
+    if (useMpesa) {
+      
+      axios
+        .post(
+          'https://us-central1-saccomgapp.cloudfunctions.net/main/lipaNaMpesaOnline',
+          {...loanToBeUpdated},
+        )
+        .then(res => {
+          dispatch(addLoanPayment(data, loanToBeUpdated));
+  
+          navigation.navigate('LoansLandingScreen') &&
+            alert('Loan Payment Successful');
+        });
+    }else{
+      await firestore()
+      .collection("loanPayment")
+      .add({
+        Amount: loanToBeUpdated.amount,
+        userId: loanToBeUpdated.user_id,
+        date: moment().format("MMMM Do YYYY"),
+        LoanId: loanToBeUpdated.id,
+      })
+      .then(()=>{
         dispatch(addLoanPayment(data, loanToBeUpdated));
-
-        navigation.navigate('LoansLandingScreen') &&
-          alert('Loan Payment Successful');
+        navigation.navigate('LoansLandingScreen')
+            alert('Loan Payment Successful');
+      })
+      .catch((error) => {
+        console.log(error);
       });
+
+    await firestore()
+      .collection("loans")
+      .doc(loanToBeUpdated.id)
+      .set({
+        ...loanToBeUpdated,
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    }
+
   };
   return (
     <SafeAreaView style={styles.container}>
@@ -197,6 +221,16 @@ const LoanPayment = ({navigation, route}) => {
                 Kes {MaximumLoan}
               </Text>
             </View>
+            <View style={{flexDirection:'row', alignItems:'center'}}>
+              <Text style={{...FONTS.h4, marginLeft:10}}>Mpesa</Text>
+              <Switch
+        trackColor={{false: '#767577', true: '#81b0ff'}}
+        thumbColor={useMpesa ? COLORS.primary : "#767577"}
+        ios_backgroundColor="#3e3e3e"
+        onValueChange={() => setUseMpesa(!useMpesa)}
+        value={useMpesa}
+      />
+              </View>
           </View>
 
           <TouchableOpacity

@@ -6,21 +6,28 @@ import {
   Image,
   SafeAreaView,
   TextInput,
+  Switch
 } from 'react-native';
 import React from 'react';
 import {Picker} from '@react-native-picker/picker';
 import {useSelector, useDispatch} from 'react-redux';
 import firestore from '@react-native-firebase/firestore';
 import axios from 'axios';
-
+import moment from 'moment';
 import {StoreDeposit} from './Actions/DepositAction';
 import ModalFilterPicker from 'react-native-modal-filter-picker';
+import SendSMS from 'react-native-sms';
+
 
 // import RangeSlider from 'rn-range-slider';
 import Slider from '@react-native-community/slider';
 
 import {icons, images, COLORS, SIZES, FONTS} from '../constants';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
+// import { Colors } from 'react-native/Libraries/NewAppScreen';
+import SpinnerModal from './SpinnerModal';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
+
+
 
 function RenderHeader({navigation}) {
   return (
@@ -68,7 +75,7 @@ const DepositAccount = ({navigation, route}) => {
       setSelectedValue(route?.params?.item.groupName);
     }
   }, [route.params]);
-  console.log(selectedValue);
+  // console.log(selectedValue);
 
   const groupData = route.params;
   const [RangeValue, setRangeValue] = React.useState(0);
@@ -79,6 +86,9 @@ const DepositAccount = ({navigation, route}) => {
   const [AllDepositAccounts, setAllDepositAccounts] = React.useState(0);
   const [ModalVisible, setModalVisible] = React.useState(false);
   const [SelectedUserId, setSelectedUserId] = React.useState('');
+  const [showmodal, setshowmodal] = React.useState(false);
+  const [useMpesa, setUseMpesa]= React.useState(false)
+
   let user = useSelector(state => state.users.AllusersMinData);
   let options = useSelector(state => state.users.userDataforModal);
   const AccountBalance1 = useSelector(state => state.deposit.depositBalance);
@@ -88,41 +98,7 @@ const DepositAccount = ({navigation, route}) => {
 
     setModalVisible(false);
   };
-  //  <ModalFilterPicker
-  //    visible={ModalVisible}
-  //    onSelect={value => onSearch(value)}
-  //    onCancel={() => setModalVisible(false)}
-  //    options={options}
-  //  />;
-  // <TouchableOpacity
-  //   onPress={() => setModalVisible(!ModalVisible)}
-  //   style={{
-  //     width: 80,
-  //     height: 40,
-  //     marginTop: 10,
-  //     justifyContent: 'center',
-  //     alignItems: 'center',
-  //     borderRadius: 10,
-  //     backgroundColor: COLORS.darkgray,
-  //   }}>
-  //   <Text
-  //     style={{
-  //       ...FONTS.body4,
-  //       color: COLORS.black,
-  //       textAlign: 'center',
-  //     }}>
-  //     select User
-  //   </Text>
-  // </TouchableOpacity>
-  //  <Text
-  //    style={{
-  //      ...FONTS.h4,
-  //      color: COLORS.primary,
-  //      marginTop: SIZES.padding / 0.7,
-  //    }}>
-  //    {SelectedUserId.label}
-  //  </Text>
-  // console.log(options, 'groupData');
+  
 
   const DepositData = [
     'individual',
@@ -140,8 +116,14 @@ const DepositAccount = ({navigation, route}) => {
     setAccountBalance(tempBalance);
     // console.log(tempBalance);
   }, [selectedValue, SelectedUserId]);
+  const HandlePaymentWithoutMpesa =()=>{
+    
+  }
+  // console.log(useMpesa);
 
   const HandleSubmit = async () => {
+
+    setshowmodal(true);
     let filteredUser = user.filter(item => item.id === SelectedUserId.key);
     const data = {
       collection: 'deposits',
@@ -162,6 +144,8 @@ const DepositAccount = ({navigation, route}) => {
         : 'none',
       status: 'pending',
     };
+    // console.log(data, 'data');
+    //  filteredUser[0].PhoneNumber,
 
     if (groupData?.item?.groupName) {
       let tempBalance2 = AccountBalance1.filter(bal => {
@@ -171,8 +155,8 @@ const DepositAccount = ({navigation, route}) => {
       });
 
       // Update accounts collection
-      if (SelectedUserId) {
-        // console.log(data, 'data');
+      if (SelectedUserId && RangeValue != '') {
+      
         await firestore()
           .collection('Accounts')
           .doc(groupData?.item?.id + groupData?.item?.groupName)
@@ -185,6 +169,21 @@ const DepositAccount = ({navigation, route}) => {
                 : Number(RangeValue),
             accountType: groupData?.item.groupName,
           })
+          .then(res => {
+            navigation.goBack();
+            SendSMS.send(
+              {
+                body: `You have deposited ${RangeValue} to skystar sacco in ${data.accountType} group. date::${data.date} `,
+                recipients: [data.PhoneNumber],
+                successTypes: ['sent', 'queued'],
+                allowAndroidSendWithoutReadPermission: true,
+              },
+              (completed, cancelled, error) => {
+               
+              },
+            );
+            setshowmodal(false);
+          })
           .catch(error => {
             console.log(error);
           });
@@ -193,36 +192,90 @@ const DepositAccount = ({navigation, route}) => {
           .add({...data})
           .then(() => {
             alert('deposit added');
-            console.log('deposit added');
+            // console.log('deposit added');
           })
           .catch(error => {
             console.log(error);
           });
+      } else
+       {
+        alert('Please Select User  Or Deposit amount');
       }
     } else {
-      if (SelectedUserId) {
-        axios
-          .post(
-            'https://us-central1-saccomgapp.cloudfunctions.net/main/lipaNaMpesaOnline',
-            {...data},
-          )
-          .then(async res => {
-            dispatch(StoreDeposit({data}));
-            navigation.goBack();
-            alert('Deposit Successful');
-          })
-          .catch(err => {
-            console.log(err);
-          });
-      } else {
-        alert('Please Select User');
-      }
+      if (useMpesa) {
+          
+        if (SelectedUserId && RangeValue != '') {
+          axios
+            .post(
+              'https://us-central1-saccomgapp.cloudfunctions.net/main/lipaNaMpesaOnline',
+              {...data},
+            )
+            .then(res => {
+              setshowmodal(false);
+              dispatch(StoreDeposit({data}));
+              navigation.goBack();
+              alert('Deposit Successful');
+            })
+            .catch(err => {
+              setshowmodal(false);
+              alert(err.message);
+              console.log(err);
+            });
+        } else {
+          alert('Please Select User  Or Deposit amount');
+        }
+          
+      }else{
+        if (SelectedUserId && RangeValue != '') {
+        await firestore()
+                .collection('deposits')
+                .add({ ...data })
+              await firestore()
+                .collection("Accounts")
+                .doc(data.userId + data.accountType)
+                .set({
+                  balance: data.balance,
+                  userId: data.userId,
+                  AccountType: data.accountType,
+                  Date: moment().format("MMMM Do YYYY"),
+                })
+                .then(()=>{
+                  
+                  alert('Deposit Successful');   
+                  setshowmodal(false);
+                  SendSMS.send(
+                    {
+                      body: `You have deposited ${RangeValue} to skystar sacco in ${data.accountType} Account. date::${data.date} `,
+                      recipients: [data.PhoneNumber],
+                      successTypes: ['sent', 'queued'],
+                      allowAndroidSendWithoutReadPermission: true,
+                    },
+                    (completed, cancelled, error) => {
+                 
+                    },
+                  );
+                  setRangeValue('')
+
+                  // console.log("data added");
+                })
+                .catch((error) => {
+                  alert(error);
+                  console.log(error);
+                });
+
+      }else{
+        alert('Please Select User  Or Deposit amount');
+      }}
     }
   };
+ 
   // const accounts = firestore().collection('Accounts');
+  // const [showmodal, setshowmodal] = React.useState(false);
+  // <SpinnerModal showModal={showmodal} title="Processing deposit..." />
 
   return (
     <SafeAreaView style={styles.container}>
+      <SpinnerModal showModal={showmodal} title="Processing deposit..." />
       <RenderHeader navigation={navigation} />
       <RenderTitle />
 
@@ -396,10 +449,21 @@ const DepositAccount = ({navigation, route}) => {
                   </Text>
                 )}
               </View>
+          
             </View>
+            <View style={{flexDirection:'row', alignItems:'center'}}>
+              <Text style={{...FONTS.h4, marginLeft:10}}>Mpesa</Text>
+              <Switch
+        trackColor={{false: '#767577', true: '#81b0ff'}}
+        thumbColor={useMpesa ? COLORS.primary : COLORS.secondary}
+        ios_backgroundColor="#3e3e3e"
+        onValueChange={() => setUseMpesa(!useMpesa)}
+        value={useMpesa}
+      />
+              </View>
           </View>
           <TouchableOpacity
-            onPress={() => HandleSubmit()}
+            onPress={HandleSubmit}
             style={{
               backgroundColor: COLORS.secondary,
               width: '90%',
@@ -412,7 +476,7 @@ const DepositAccount = ({navigation, route}) => {
               alignSelf: 'center',
               elevation: 3,
             }}>
-            <Text style={{...FONTS.h3, color: COLORS.white}}> Deposit</Text>
+            <Text style={{...FONTS.h3, color: COLORS.white}}>Deposit</Text>
           </TouchableOpacity>
         </View>
       </View>

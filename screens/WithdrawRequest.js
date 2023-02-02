@@ -13,6 +13,7 @@ import firestore from '@react-native-firebase/firestore';
 
 // import RangeSlider from 'rn-range-slider';
 import Slider from '@react-native-community/slider';
+import SpinnerModal from './SpinnerModal';
 
 import {icons, images, COLORS, SIZES, FONTS} from '../constants';
 import {Picker} from '@react-native-picker/picker';
@@ -60,6 +61,8 @@ const WithdrawRequest = ({navigation, route}) => {
   const [MinimumLoan, setMinimumLoan] = React.useState(0);
   const [MaximumLoan, setMaximumLoan] = React.useState(100000);
   const [selectedValue, setSelectedValue] = React.useState(0);
+  const [showmodal, setshowmodal] = React.useState(false);
+  // <SpinnerModal showModal={showmodal} title="Processing deposit..." />
 
   const DepositData = ['individual', 'jamboAccount'];
   let groupData = route.params;
@@ -78,31 +81,36 @@ const WithdrawRequest = ({navigation, route}) => {
 
   const handleWithRequest = async () => {
     // console.log(user);
-    let filteredUser = user.filter(item => item.id == SelectedUserId.key);
-    let data = {
-      userId: filteredUser[0].id,
-      userName: filteredUser[0].Name,
-      phoneNumber: filteredUser[0].PhoneNumber,
-      amount: RangeValue,
-      AccountType:
-        groupData?.item?.groupName == undefined
-          ? selectedValue
-          : groupData.item.groupName,
-      status: 'pending',
-      groupId: groupData?.item?.id == undefined ? 'null' : groupData.item.id,
+    if (SelectedUserId && RangeValue != '') {
+      let filteredUser = user.filter(item => item.id == SelectedUserId.key);
+      let data = {
+        userId: filteredUser[0].id,
+        userName: filteredUser[0].Name,
+        phoneNumber: filteredUser[0].PhoneNumber,
+        amount: RangeValue,
+        AccountType:
+          groupData?.item?.groupName == undefined
+            ? selectedValue
+            : groupData.item.groupName,
+        status: 'pending',
+        groupId: groupData?.item?.id == undefined ? 'null' : groupData.item.id,
 
-      date: Date.now(),
-    };
-    dispatch(storeWithdrawRequest({data}));
+        date: Date.now(),
+      };
+      dispatch(storeWithdrawRequest({data}));
 
-    alert('Withdraw Request Successful');
-    navigation.goBack();
-    setRangeValue(0);
-    setSelectedValue('');
+      alert('Withdraw Request Successful');
+      navigation.goBack();
+      setRangeValue(0);
+      setSelectedValue('');
+    } else {
+      alert('please select user or withdraw amount');
+    }
   };
 
   return (
     <SafeAreaView style={styles.container}>
+      <SpinnerModal showModal={showmodal} title="Processing deposit..." />
       <RenderHeader navigation={navigation} />
 
       <View style={{height: '85%', marginTop: 0}}>

@@ -81,25 +81,6 @@ const LoanRequest = ({navigation}) => {
   };
 
   const HandleSubmit = async () => {
-    // SendSMS.send(
-    //   {
-    //     body: 'Loan Request Submitted successively',
-    //     recipients: ['0748406477', '0757345028'],
-    //     successTypes: ['sent', 'queued'],
-    //     allowAndroidSendWithoutReadPermission: true,
-    //   },
-    //   (completed, cancelled, error) => {
-    //     console.log(
-    //       'SMS Callback: completed: ' +
-    //         completed +
-    //         ' cancelled: ' +
-    //         cancelled +
-    //         'error: ' +
-    //         error,
-    //     );
-    //   },
-    // );
-
     const LoanDetails = {
       LoanAmount: RangeValue,
       user: userSelect,
@@ -108,10 +89,12 @@ const LoanRequest = ({navigation}) => {
       date: Date.now(),
     };
 
-    if (RangeValue > 0) {
+    if (RangeValue > 0 && SelectedUserId !== '') {
       dispatch(createLoanRequest({LoanDetails})) && navigation.goBack();
       // console.log(userSelect);
       alert('Loan Request Submitted Successfully');
+    } else {
+      alert('Please fill all the fields');
     }
   };
   const [ModalVisible, setModalVisible] = React.useState(false);

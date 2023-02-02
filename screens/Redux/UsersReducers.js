@@ -14,24 +14,7 @@ export default function UsersReducers(state = initialState, action) {
     case 'GET_ALL_USERS':
       let {AuthUser} = state;
       let tempadmin = [];
-      // get filtered  user details for the logged in user
-      let userDetails = action.payload.filter(user => {
-        if (user?.id == AuthUser[0]?.uid) {
-          if (user.isadmin) {
-            tempadmin.push(user);
-          }
-          return user;
-        }
-      });
 
-      let userData = [];
-
-      let user = {
-        id: userDetails[0].id,
-        Name: userDetails[0].Name,
-        PhoneNumber: userDetails[0].Phone,
-      };
-      userData.push(user);
       // reducing the user details to short version
       let shortUserDetails = action.payload.map(user => {
         return {
@@ -47,6 +30,24 @@ export default function UsersReducers(state = initialState, action) {
           label: user.Name + ' ' + user?.FirstName,
         };
       });
+      // get filtered  user details for the logged in user
+      let userDetails = action.payload.filter(user => {
+        if (user?.id == AuthUser[0]?.uid) {
+          if (user.isadmin) {
+            tempadmin.push(user);
+          }
+          return user;
+        }
+      });
+
+      let userData = [];
+
+      let user = {
+        id: userDetails[0]?.id,
+        Name: userDetails[0]?.Name,
+        PhoneNumber: userDetails[0]?.Phone,
+      };
+      userData.push(user);
 
       return {
         ...state,

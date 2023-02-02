@@ -36,15 +36,16 @@ const Login = ({navigation}) => {
       setpassword(user?.password);
     });
   }, []);
+  // console.log('userId', userId);
 
   const HandleLogin = async () => {
     if (Email != '' || password != '' || Pin != '') {
       auth()
         .signInWithEmailAndPassword(Email, password)
-        .then(async () => {
+        .then(async user => {
           await firestore()
             .collection('users')
-            .doc(userId)
+            .doc(user.user.uid)
             .get()
             .then(async doc => {
               if (doc.exists) {
@@ -145,7 +146,7 @@ const Login = ({navigation}) => {
 
                 height: '60%',
               }}>
-              {UserForDisplay == '' ? (
+              {UserForDisplay == undefined ? (
                 <>
                   <View
                     style={{
@@ -292,7 +293,7 @@ const Login = ({navigation}) => {
             }}>
             <TouchableOpacity
               onPress={() =>
-                UserForDisplay == '' ? HandleLogin() : HandlePinLogin()
+                UserForDisplay == undefined ? HandleLogin() : HandlePinLogin()
               }
               style={{
                 backgroundColor: COLORS.secondary,

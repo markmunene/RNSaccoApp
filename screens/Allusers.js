@@ -8,6 +8,7 @@ import {
   Alert,
   TouchableOpacity,
   FlatList,
+  TextInput,
 } from 'react-native';
 import {icons, images, COLORS, SIZES, FONTS} from '../constants';
 
@@ -80,9 +81,35 @@ function RenderTitle({navigation}) {
   );
 }
 
+
 const Allusers = ({navigation}) => {
+  const Users = useSelector(state => state.users.Users);
+  const [SearchText, setSearchText] = React.useState('');
+ 
+  const [StateUserData, setStateUserData] = React.useState([]);
+
+  React.useEffect(()=>{
+let mount = true;
+if(mount){
+  setStateUserData(Users)
+}
+  },[])
+
+  const onSearch = text => {
+    setSearchText(text);
+    let SelectedUsers = [];
+
+    if (!text == undefined || !text == '') {
+      SelectedUsers = Users.filter(item => {
+        return item.Name.toLowerCase().includes(text.toLowerCase());
+      });
+      setStateUserData(SelectedUsers);
+    } else {
+      setStateUserData(Users);
+    }
+  };
   const dispatch = useDispatch();
-  function RenderRequest({item, navigation}) {
+  function RenderUsers({item, navigation}) {
     return (
       <View style={{width: '100%'}}>
         <Text
@@ -138,7 +165,6 @@ const Allusers = ({navigation}) => {
       </View>
     );
   }
-  const Users = useSelector(state => state.users.Users);
   const HandleRequestDelete = async item => {
     // alert(item.id);
     Alert.alert(
@@ -173,10 +199,45 @@ const Allusers = ({navigation}) => {
           width: '100%',
           height: '80%',
         }}>
+          <View
+            style={{
+              height: 40,
+              width: '90%',
+              padding: SIZES.padding,
+              borderColor: COLORS.primary,
+              borderWidth: 1,
+              flexDirection: 'row',
+              margin: SIZES.padding,
+              alignSelf: 'center',
+              borderRadius: 10,
+            }}>
+            <TextInput
+              placeholderTextColor={COLORS.primary}
+              placeholder="search Here"
+              value={SearchText}
+              onChangeText={text => onSearch(text)}
+              style={{
+                width: '90%',
+                height: 40,
+                alignSelf: 'center',
+                color: COLORS.primary,
+              }}
+            />
+            <Image
+              source={icons.search}
+              resizeMode="contain"
+              style={{
+                width: 20,
+                height: 40,
+                alignSelf: 'center',
+                tintColor: COLORS.primary,
+              }}
+            />
+          </View>
         <FlatList
-          data={Users}
+          data={StateUserData}
           renderItem={({item}) => (
-            <RenderRequest item={item} navigation={navigation} />
+            <RenderUsers item={item} navigation={navigation} />
           )}
           keyExtractor={(item, index) => index.toString() + item.id}
         />

@@ -93,7 +93,7 @@ function RenderRequest({item}) {
               color: COLORS.primary,
               marginRight: 5,
             }}>
-            {item.Phone}
+            {item.PhoneNumber}
           </Text>
         </View>
       </TouchableOpacity>

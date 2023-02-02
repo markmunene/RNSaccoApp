@@ -14,8 +14,8 @@ import {icons, images, COLORS, SIZES, FONTS} from '../constants';
 import firestore from '@react-native-firebase/firestore';
 // import UserData from './UsersData';
 import {useSelector, useDispatch} from 'react-redux';
-import {ADD_NEW_Joints} from './Actions/Accounts';
-
+import {ADD_NEW_Joints, getJoints} from './Actions/Accounts';
+import SpinnerModal from './SpinnerModal';
 const CreateJointAccounts = ({navigation}) => {
   const [SearchText, setSearchText] = React.useState('');
   const [SelectedUsers, setSelectedUsers] = React.useState([]);
@@ -33,29 +33,36 @@ const CreateJointAccounts = ({navigation}) => {
       mount = false;
     };
   }, []);
-
+  const [showmodal, setshowmodal] = React.useState(false);
+  // <SpinnerModal showModal={showmodal} title="Processing deposit..." />
   // function to save users in a group
   const HandleSubmit = async () => {
-    // save the group name
-    // save the users in the group
-    // navigate to the group screen
-    const groupData = {
-      groupName: groupName,
-      users: SelectedUsers,
-      date: Date.now(),
-    };
+    if (groupName != '' && SelectedUsers.length > 0) {
+      setshowmodal(true);
+      const groupData = {
+        collection: 'Joints',
+        groupName: groupName.replace(/\s/g, ''),
+        users: SelectedUsers,
+        date: Date.now(),
+      };
 
-    await firestore()
-      .collection('Joints')
-      .add({
-        ...groupData,
-      })
-      .then(() => {
-        navigation.navigate('JointAccounts');
-        alert('Group Created Successfully');
-        dispatch(ADD_NEW_Joints({...groupData}));
-      })
-      .catch(err => {});
+      await firestore()
+        .collection('Joints')
+        .add({
+          ...groupData,
+        })
+        .then(() => {
+          setshowmodal(false);
+          navigation.goBack();
+          alert('Joint Created Successfully');
+          dispatch(getJoints());
+        })
+        .catch(err => {
+          console.log(err.messages);
+        });
+    } else {
+      alert('Enter Joint Name OR Select Users');
+    }
   };
 
   const onSearch = text => {
@@ -126,6 +133,10 @@ const CreateJointAccounts = ({navigation}) => {
   }
   return (
     <SafeAreaView style={styles.container}>
+      <SpinnerModal
+        showModal={showmodal}
+        title="Processing Joint creation..."
+      />
       <View
         style={{
           justifyContent: 'space-between',
@@ -153,6 +164,7 @@ const CreateJointAccounts = ({navigation}) => {
         </Text>
       </View>
       <ScrollView
+        nestedScrollEnabled={true}
         style={{width: '100%', height: '100%'}}
         contentContainerStyle={{flexGrow: 1}}>
         <View style={{height: '70%'}}>
@@ -202,7 +214,9 @@ const CreateJointAccounts = ({navigation}) => {
               borderColor: COLORS.primary,
               borderWidth: 1,
             }}>
-            <ScrollView showsHorizontalScrollIndicator={false}>
+            <ScrollView
+              showsHorizontalScrollIndicator={false}
+              nestedScrollEnabled={true}>
               {StateUserData.map((item, index) => (
                 <RenderUsers item={item} key={index.toString() + item.id} />
               ))}
@@ -318,7 +332,7 @@ const CreateJointAccounts = ({navigation}) => {
               alignSelf: 'center',
               borderRadius: 10,
             }}
-            onPress={() => HandleSubmit()}>
+            onPress={HandleSubmit}>
             <Text
               style={{...FONTS.h2, color: COLORS.white, textAlign: 'center'}}>
               Submit

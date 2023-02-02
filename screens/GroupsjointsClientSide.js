@@ -7,13 +7,15 @@ import {
   ScrollView,
   TouchableOpacity,
   FlatList,
+  Alert,
 } from 'react-native';
 import React from 'react';
 
 import {icons, images, COLORS, SIZES, FONTS} from '../constants';
-import {useSelector} from 'react-redux';
-
+import {useSelector, useDispatch} from 'react-redux';
+import {Delete_Groups} from './Actions/Accounts';
 const GroupjointsClientSide = ({navigation}) => {
+  const dispatch = useDispatch();
   const AccountBalance1 = useSelector(state => state.deposit.depositBalance);
   let depositData = useSelector(state => state.deposit.deposit);
 
@@ -28,12 +30,6 @@ const GroupjointsClientSide = ({navigation}) => {
   React.useEffect(() => {
     let mount = true;
     let tempData = [];
-    depositData.filter(item => {
-      if (item.accountType == 'group' || item.accountType == 'Joint') {
-        tempData.push(item);
-      }
-    });
-    setGroupsTransactions(tempData);
 
     if (mount) {
       setGroupsState(groups);
@@ -47,7 +43,7 @@ const GroupjointsClientSide = ({navigation}) => {
         mount = false;
       };
     }
-  }, [shiftBewteenGroups]);
+  }, [shiftBewteenGroups, joints, groups]);
 
   const HandleToggle = () => {
     setShiftBewteenGroups(false);
@@ -74,26 +70,28 @@ const GroupjointsClientSide = ({navigation}) => {
       navigation.navigate('WithdrawRequest', {item});
     };
     const HandleRequestDelete = ({item}) => {
-      // Alert.alert(
-      //   'delete action confirmation',
-      //   'Are  u sure you want to delete this request',
-      //   [
-      //     {
-      //       text: 'Cancel',
-      //       onPress: () => setIsDelete(false),
-      //       style: 'cancel',
-      //     },
-      //     {
-      //       text: 'OK',
-      //       onPress: () => {
-      //         try {
-      //         } catch (error) {
-      //           console.log('fire ', error);
-      //         }
-      //       },
-      //     },
-      //   ],
-      // );
+      Alert.alert(
+        'Delete action confirmation',
+        'Are  u sure you want to delete this request',
+        [
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+          },
+          {
+            text: 'OK',
+            onPress: () => {
+              try {
+                dispatch(Delete_Groups(item));
+                // setIsDelete(false);
+              } catch (error) {
+                console.log('fire ', error);
+              }
+            },
+          },
+        ],
+      );
     };
     const HandleTranscation = id => {
       let Transactions = depositData.filter(item => item.groupId == id.id);
@@ -341,7 +339,7 @@ const GroupjointsClientSide = ({navigation}) => {
             alignSelf: 'center',
           }}>
           <TouchableOpacity
-            onPress={() => HandleToggle()}
+            onPress={HandleToggle}
             style={{
               backgroundColor: shiftBewteenGroups ? 'white' : COLORS.secondary,
               padding: SIZES.padding,
@@ -361,7 +359,7 @@ const GroupjointsClientSide = ({navigation}) => {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => HandleToggle2()}
+            onPress={HandleToggle2}
             style={{
               backgroundColor: shiftBewteenGroups ? COLORS.secondary : 'white',
               padding: SIZES.padding,

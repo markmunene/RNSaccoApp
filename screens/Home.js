@@ -9,9 +9,11 @@ import {
   ScrollView,
 } from 'react-native';
 import React from 'react';
+import auth from '@react-native-firebase/auth';
 
 import {icons, images, COLORS, SIZES, FONTS} from '../constants';
 const Scrollx = new Animated.Value(0);
+import {HandleAuthPin} from './Actions/LoginAction';
 
 const RenderSlider = () => {
   return (
@@ -98,6 +100,7 @@ function RenderOptions({navigation}) {
         height: '60%',
         alignItems: 'center',
         // justifyContent: 'center',
+        position: 'relative',
         marginTop: SIZES.padding / 3,
       }}>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -329,6 +332,25 @@ function RenderOptions({navigation}) {
 const Home = ({navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
+      <View style={{flexDirection: 'row', zIndex: 3}}>
+        <TouchableOpacity
+          onPress={() =>
+            auth()
+              .signOut()
+              .then(() => navigation.navigate('login'))
+          }
+          style={{
+            width: '20%',
+            position: 'absolute',
+            top: 20,
+            backgroundColor: COLORS.white,
+            left: 10,
+            padding: 5,
+            borderRadius: 10,
+          }}>
+          <Text style={{...FONTS.h4, color: 'red'}}>Logout</Text>
+        </TouchableOpacity>
+      </View>
       <RenderSlider />
       <RenderDots />
       <RenderOptions navigation={navigation} />

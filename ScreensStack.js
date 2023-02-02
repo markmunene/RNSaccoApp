@@ -87,7 +87,7 @@ const Screenstack = () => {
     // listening  to state changes
     let accounts = firestore().collection('Accounts');
     // accounts = accounts.where('userId', '==', SelectedUserId.key);
-    accounts = accounts.limit(10);
+    // accounts = accounts.limit(0);
     accounts.onSnapshot(querySnapshot => {
       const accountsArray = [];
       let i = 0;
@@ -107,7 +107,7 @@ const Screenstack = () => {
   }, []);
   React.useEffect(() => {
     let ApprovedLoans = firestore().collection('loans');
-    ApprovedLoans = ApprovedLoans.limit(10);
+    ApprovedLoans = ApprovedLoans.limit(500);
     ApprovedLoans.onSnapshot(querySnapshot => {
       const ApprovedLoansArray = [];
       let i = 0;

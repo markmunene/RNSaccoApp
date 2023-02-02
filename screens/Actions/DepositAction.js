@@ -1,5 +1,6 @@
 import firestore from '@react-native-firebase/firestore';
 import moment from 'moment';
+import {Delete_WithdrawRequest} from './WithdrawAction';
 
 export const StoreDeposit = deposit => {
   return async dispatch => {
@@ -21,14 +22,11 @@ export const StoreDeposit = deposit => {
       //     console.log(error);
       //   });
       // listen for changes in the collection
-
       // console.log(accounts, 'accounts');
-
       // // listen to deposits collection
       // let deposits = firestore().collection('deposits');
       // deposits = deposits.where('userId', '==', deposit.data.userId);
       // deposits = deposits.limit(10);
-
       // deposits.onSnapshot(querySnapshot => {
       //   const depositsArray = [];
       //   let i = 0;
@@ -43,7 +41,7 @@ export const StoreDeposit = deposit => {
       //     payload: depositsArray,
       //   });
       // });
-      console.log(deposit, 'deposit');
+      // console.log(deposit, 'deposit');
     } catch (error) {
       console.log(error);
     }
@@ -65,6 +63,9 @@ export const HandleWithdrawal = withdrawal => {
           AccountType: withdrawal.AccountType,
           Date: moment().format('MMMM Do YYYY'),
         })
+        .then(async () => {
+          dispatch(Delete_WithdrawRequest({id: withdrawal.id}));
+        })
         .catch(error => {
           alert(error);
           console.log(error);
@@ -78,6 +79,9 @@ export const HandleWithdrawal = withdrawal => {
           userId: withdrawal.userId,
           AccountType: withdrawal.AccountType,
           Date: moment().format('MMMM Do YYYY'),
+        })
+        .then(async () => {
+          dispatch(Delete_WithdrawRequest({id: withdrawal.id}));
         })
         .catch(error => {
           alert(error);

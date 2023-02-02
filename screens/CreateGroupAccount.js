@@ -15,8 +15,9 @@ import firestore from '@react-native-firebase/firestore';
 
 import {icons, images, COLORS, SIZES, FONTS} from '../constants';
 
-import {Add_newAccount} from './Actions/Accounts';
+import {Add_newAccount, getGroups} from './Actions/Accounts';
 import UserData from './UsersData';
+import SpinnerModal from './SpinnerModal';
 
 import {useSelector, useDispatch} from 'react-redux';
 
@@ -26,6 +27,7 @@ const CreateGroupAccount = ({navigation}) => {
   const [StateUserData, setStateUserData] = React.useState([]);
   const [groupName, setgroupName] = React.useState('');
   const users = useSelector(state => state.users.AllusersMinData);
+  const [showmodal, setshowmodal] = React.useState(false);
 
   const dispatch = useDispatch();
 
@@ -39,30 +41,37 @@ const CreateGroupAccount = ({navigation}) => {
       mount = false;
     };
   }, []);
-
+  // <SpinnerModal showModal={showmodal} title="Processing deposit..." />
   // function to save users in a group
   const HandleSubmit = async () => {
-    // save the group name
-    // save the users in the group
-    // navigate to the group screen
-    const groupData = {
-      groupName: groupName,
-      users: SelectedUsers,
-      date: Date.now(),
-    };
-    await firestore()
-      .collection('groups')
-      .add({
-        ...groupData,
-      })
-      .then(() => {
-        dispatch(Add_newAccount({...groupData}));
+    if (groupName != '' && SelectedUsers.length > 0) {
+      setshowmodal(true);
+     
+      const groupData = {
+        collection: 'groups',
+        groupName: groupName.replace(/\s/g, ''),
+        users: SelectedUsers,
+        date: Date.now(),
+      };
+      await firestore()
+        .collection('groups')
+        .add({
+          ...groupData,
+        })
+        .then(() => {
+          setshowmodal(false);
+          dispatch(getGroups());
 
-        alert('Group Created Successfully');
-      })
-      .catch(error => {
-        console.log(error);
-      });
+          alert('Group Created Successfully');
+        })
+        .catch(error => {
+          setshowmodal(false);
+          alert(error.message);
+          console.log(error);
+        });
+    } else {
+      alert('Enter groupName OR Select users');
+    }
   };
 
   const onSearch = text => {
@@ -132,6 +141,10 @@ const CreateGroupAccount = ({navigation}) => {
   }
   return (
     <SafeAreaView style={styles.container}>
+      <SpinnerModal
+        showModal={showmodal}
+        title="Processing group Creation..."
+      />
       <View style={styles.header}>
         <TouchableOpacity
           style={{width: 40}}
@@ -152,6 +165,7 @@ const CreateGroupAccount = ({navigation}) => {
         </Text>
       </View>
       <ScrollView
+        nestedScrollEnabled={true}
         style={{width: '100%', height: '100%'}}
         contentContainerStyle={{flexGrow: 1}}>
         <View style={{height: '70%'}}>
@@ -201,7 +215,9 @@ const CreateGroupAccount = ({navigation}) => {
               borderColor: COLORS.primary,
               borderWidth: 1,
             }}>
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              nestedScrollEnabled={true}>
               {StateUserData.map((item, index) => (
                 <RenderUsers item={item} key={index.toString() + item.id} />
               ))}
@@ -229,7 +245,9 @@ const CreateGroupAccount = ({navigation}) => {
               borderWidth: 1,
               borderRadius: 10,
             }}>
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              nestedScrollEnabled={true}>
               {SelectedUsers?.map((item, index) => (
                 <View
                   key={index.toString() + item.id}
@@ -319,7 +337,7 @@ const CreateGroupAccount = ({navigation}) => {
               alignSelf: 'center',
               borderRadius: 10,
             }}
-            onPress={() => HandleSubmit()}>
+            onPress={HandleSubmit}>
             <Text
               style={{...FONTS.h2, color: COLORS.white, textAlign: 'center'}}>
               Submit

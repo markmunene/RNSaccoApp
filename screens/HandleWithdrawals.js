@@ -103,22 +103,23 @@ const HandleWithDrawals = ({navigation, route}) => {
     //   status: 'approved',
     // };
     // console.log(withdrawData, 'AccountBalanceData1');
-    dispatch(Delete_WithdrawRequest({id: withdrawalData.item.id}));
-
-    dispatch(
-      HandleWithdrawal({
-        balance: Number(AccountBalanceData1[0].balance) - Number(RangeValue),
-        userId: withdrawalData.item.userId,
-        AccountType: withdrawalData.item.AccountType,
-        groupId:
-          withdrawalData.item?.groupId == 'null'
-            ? 'null'
-            : withdrawalData.item.groupId,
-        Date: Date.now(),
-      }),
-    );
-
-    navigation.goBack() && alert('WithDrawal Successful');
+    // dispatch(Delete_WithdrawRequest({id: withdrawalData.item.id}));
+    if (RangeValue > 0) {
+      dispatch(
+        HandleWithdrawal({
+          id: withdrawalData.item.id,
+          balance: Number(AccountBalanceData1[0].balance) - Number(RangeValue),
+          userId: withdrawalData.item.userId,
+          AccountType: withdrawalData.item.AccountType,
+          groupId:
+            withdrawalData.item?.groupId == 'null'
+              ? 'null'
+              : withdrawalData.item.groupId,
+          Date: Date.now(),
+        }),
+      );
+      navigation.goBack() && alert('WithDrawal Successful');
+    }
   };
   return (
     <SafeAreaView style={styles.container}>
